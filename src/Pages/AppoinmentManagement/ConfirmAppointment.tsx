@@ -30,8 +30,9 @@ const ConfirmAppointment: React.FC = () => {
 
 	const [reasonForVisit, setReasonForVisit] = useState('')
 	const [additionalNotes, setAdditionalNotes] = useState('')
-	const [hasInsurance, setHasInsurance] = useState<boolean>(true)
+	const [hasInsurance, setHasInsurance] = useState(false)
 	const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'pay_on_site'>('card')
+	const [insuranceCoverageStatus, setInsuranceCoverageStatus] = useState<'idle' | 'checking' | 'covered' | 'not_covered' | 'error'>('idle')
 
 	useEffect(() => {
 		if (!bookingState.slot || !bookingState.doctor) {
@@ -113,14 +114,33 @@ const ConfirmAppointment: React.FC = () => {
 
 	const departmentSummary = bookingState.department?.name ?? 'your selected specialty'
 
-	const paymentOptions: Array<{ id: typeof paymentMethod; label: string; helper?: string }> = useMemo(
-		() => [
-			{ id: 'card', label: 'Credit / Debit Card', helper: 'Secure checkout with major cards accepted.' },
-			{ id: 'paypal', label: 'PayPal', helper: 'You will be redirected to PayPal to complete your payment.' },
-			{ id: 'pay_on_site', label: 'Pay On-site', helper: 'Pay with cash or card when you arrive for your appointment.' }
-		],
-		[]
-	)
+	const paymentOptions = [
+		{ id: 'card', label: 'Credit/Debit Card', helper: 'Pay securely online.' },
+		{ id: 'paypal', label: 'PayPal', helper: 'Pay using PayPal.' },
+		{ id: 'pay_on_site', label: 'Pay at Hospital', helper: 'Pay at the hospital counter.' },
+	]
+	const isPrivateHospital = bookingState.hospital?.type === 'Private'
+
+	// Mock insurance coverage check function
+	function mockInsuranceCoverage(departmentName: string): Promise<boolean> {
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				// Example: Only Cardiology is covered
+				resolve(departmentName === 'Cardiology');
+			}, 1000);
+		});
+	}
+
+	useEffect(() => {
+		if (hasInsurance && bookingState.department?.name) {
+			setInsuranceCoverageStatus('checking');
+			mockInsuranceCoverage(bookingState.department.name)
+				.then((isCovered) => setInsuranceCoverageStatus(isCovered ? 'covered' : 'not_covered'))
+				.catch(() => setInsuranceCoverageStatus('error'));
+		} else {
+			setInsuranceCoverageStatus('idle');
+		}
+	}, [hasInsurance, bookingState.department?.name])
 
 	return (
 		<div className="space-y-8">
@@ -150,24 +170,29 @@ const ConfirmAppointment: React.FC = () => {
 						/>
 					</div>
 
-					<div className="space-y-3 rounded-3xl border border-[#e4e9fb] bg-white/95 p-6 shadow-[0_22px_70px_-50px_rgba(21,52,109,0.28)] backdrop-blur">
-						<header className="text-lg font-semibold text-[#1b2b4b]">Insurance Details</header>
-						<label className="flex items-start gap-3 text-sm text-[#1b2b4b]">
+					{/* Insurance Details Section */}
+					<div className="mt-4">
+						<label className="flex items-center gap-2">
 							<input
 								type="checkbox"
 								checked={hasInsurance}
-								onChange={(event) => setHasInsurance(event.target.checked)}
-								className="mt-1 h-4 w-4 rounded border-[#d0daf0] text-[#1f4f8a] focus:ring-[#1f4f8a]"
+								onChange={e => setHasInsurance(e.target.checked)}
+								className="accent-blue-600"
 							/>
-							<span>
-								I have valid medical insurance
-								<p className="text-xs text-[#6f7d95]">Your coverage will be validated upon arrival. Please bring your insurance card.</p>
-							</span>
+							I have valid medical insurance
 						</label>
-						<div className="flex gap-3 rounded-2xl border border-[#f4dcbc] bg-[#fff5e8] px-4 py-3 text-xs text-[#9a6b2f]">
-							<span className="inline-flex h-5 w-5 flex-none items-center justify-center rounded-full border border-[#f4c177] text-[11px] font-semibold">i</span>
-							<p>Please note that some services or procedures may not be fully covered by your insurance plan. Contact your provider for detailed coverage information.</p>
-						</div>
+						{insuranceCoverageStatus === 'checking' && (
+							<p className="text-xs text-blue-500 mt-2">Checking insurance coverage...</p>
+						)}
+						{insuranceCoverageStatus === 'covered' && (
+							<p className="text-xs text-green-600 mt-2">Your insurance covers this service. Info will be linked to your appointment.</p>
+						)}
+						{insuranceCoverageStatus === 'not_covered' && (
+							<p className="text-xs text-red-500 mt-2">Your insurance does not cover this service. You may need to pay out-of-pocket.</p>
+						)}
+						{insuranceCoverageStatus === 'error' && (
+							<p className="text-xs text-orange-500 mt-2">Unable to check coverage. Please try again or contact support.</p>
+						)}
 					</div>
 				</section>
 
@@ -215,39 +240,41 @@ const ConfirmAppointment: React.FC = () => {
 						</div>
 					</div>
 
-					<div className="space-y-4 rounded-3xl border border-[#e6ebff] bg-white/95 p-6 shadow-[0_22px_70px_-50px_rgba(21,52,109,0.28)] backdrop-blur">
-						<header className="text-lg font-semibold text-[#1b2b4b]">Payment Details</header>
-						<div className="flex items-center justify-between text-sm text-[#526086]">
-							<span>Estimated Cost:</span>
-							<span className="text-xl font-semibold text-[#1f4f8a]">$150.00</span>
+					{isPrivateHospital && (
+						<div className="space-y-4 rounded-3xl border border-[#e6ebff] bg-white/95 p-6 shadow-[0_22px_70px_-50px_rgba(21,52,109,0.28)] backdrop-blur">
+							<header className="text-lg font-semibold text-[#1b2b4b]">Payment Details</header>
+							<div className="flex items-center justify-between text-sm text-[#526086]">
+								<span>Estimated Cost:</span>
+								<span className="text-xl font-semibold text-[#1f4f8a]">$150.00</span>
+							</div>
+							<p className="text-xs text-[#8994af]">This is an estimate. Final cost may vary based on services rendered.</p>
+							<div className="space-y-3">
+								{paymentOptions.map((option) => (
+									<label
+										key={option.id}
+										className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 text-sm transition ${
+											paymentMethod === option.id
+												? 'border-[#1f4f8a] bg-[#f4f8ff] text-[#1b2b4b] shadow-[0_18px_34px_-26px_rgba(21,52,109,0.6)]'
+												: 'border-[#dce4f7] text-[#1b2b4b] hover:border-[#c0d4ff] hover:bg-[#f7faff]'
+										}`}
+									>
+										<input
+											type="radio"
+											name="paymentMethod"
+											value={option.id}
+											checked={paymentMethod === option.id}
+											onChange={() => setPaymentMethod(option.id as 'card' | 'paypal' | 'pay_on_site')}
+											className="mt-1 h-4 w-4 border-[#cfd9ef] text-[#1f4f8a] focus:ring-[#1f4f8a]"
+										/>
+										<div className="space-y-1">
+											<p className="font-semibold">{option.label}</p>
+											{option.helper ? <p className="text-xs text-[#6f7d95]">{option.helper}</p> : null}
+										</div>
+									</label>
+								))}
+							</div>
 						</div>
-						<p className="text-xs text-[#8994af]">This is an estimate. Final cost may vary based on services rendered.</p>
-						<div className="space-y-3">
-							{paymentOptions.map((option) => (
-								<label
-									key={option.id}
-									className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 text-sm transition ${
-										paymentMethod === option.id
-											? 'border-[#1f4f8a] bg-[#f4f8ff] text-[#1b2b4b] shadow-[0_18px_34px_-26px_rgba(21,52,109,0.6)]'
-											: 'border-[#dce4f7] text-[#1b2b4b] hover:border-[#c0d4ff] hover:bg-[#f7faff]'
-									}`}
-								>
-									<input
-										type="radio"
-										name="paymentMethod"
-										value={option.id}
-										checked={paymentMethod === option.id}
-										onChange={() => setPaymentMethod(option.id)}
-										className="mt-1 h-4 w-4 border-[#cfd9ef] text-[#1f4f8a] focus:ring-[#1f4f8a]"
-									/>
-									<div className="space-y-1">
-										<p className="font-semibold">{option.label}</p>
-										{option.helper ? <p className="text-xs text-[#6f7d95]">{option.helper}</p> : null}
-									</div>
-								</label>
-							))}
-						</div>
-					</div>
+					)}
 				</aside>
 			</div>
 

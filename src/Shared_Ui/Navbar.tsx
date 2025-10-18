@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Bell, CalendarCheck, LogIn, LogOut, Menu, Search, User, UserRound } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import NotificationSheet from './NotificationSheet'
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [notificationSheetOpen, setNotificationSheetOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
 
@@ -30,6 +32,17 @@ const Navbar: React.FC = () => {
           <button type="button" aria-label="Open menu" onClick={() => setMobileMenuOpen((prev) => !prev)} className="p-2 rounded-full border border-[#d8e3f3] bg-white text-[#1b2b4b]">
             <Menu className="h-6 w-6" />
           </button>
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#d8e3f3] bg-white text-[#1b2b4b] transition hover:border-[#2a6bb7] hover:text-[#2a6bb7]"
+            onClick={() => setNotificationSheetOpen(true)}
+          >
+            <Bell className="h-5 w-5" strokeWidth={1.8} />
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#2a6bb7] text-[10px] font-semibold text-white">
+              3
+            </span>
+          </button>
         </div>
         <div className="hidden md:flex flex-1 items-center justify-end gap-4">
           <div className="h-10 min-w-[280px] items-center gap-2 rounded-full border border-[#d8e3f3] bg-[#f9fbff] px-4 text-sm text-[#1b2b4b] shadow-sm transition focus-within:border-[#2a6bb7] focus-within:ring-1 focus-within:ring-[#2a6bb7] flex">
@@ -44,6 +57,7 @@ const Navbar: React.FC = () => {
             type="button"
             aria-label="Notifications"
             className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#d8e3f3] bg-white text-[#1b2b4b] transition hover:border-[#2a6bb7] hover:text-[#2a6bb7]"
+            onClick={() => setNotificationSheetOpen(true)}
           >
             <Bell className="h-5 w-5" strokeWidth={1.8} />
             <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#2a6bb7] text-[10px] font-semibold text-white">
@@ -129,6 +143,7 @@ const Navbar: React.FC = () => {
           </nav>
         </div>
       )}
+      <NotificationSheet open={notificationSheetOpen} onClose={() => setNotificationSheetOpen(false)} />
     </header>
   )
 }

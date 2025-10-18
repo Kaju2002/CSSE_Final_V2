@@ -238,7 +238,7 @@ const SlotSelection: React.FC = () => {
 
 					</div>
 
-					<div className="ml-auto pt-1">
+					<div className="ml-auto pt-1 hidden sm:block">
 						<Button
 							type="button"
 							onClick={handleBack}
@@ -286,7 +286,10 @@ const SlotSelection: React.FC = () => {
 					<div className="text-xs text-[#6f7d95]">Select a day to view available times.</div>
 				</div>
 
-				<div className="-mx-2 flex gap-2 overflow-x-auto px-2 pb-2">
+				<div
+					className="-mx-2 flex gap-2 overflow-x-auto px-2 pb-2 no-scrollbar"
+					style={{ WebkitOverflowScrolling: 'touch' }}
+				>
 					{weekDays.map((day, index) => {
 						const isActive = index === activeDayIndex
 						const dateLabel = day.toLocaleDateString(undefined, { day: 'numeric' })
@@ -297,7 +300,7 @@ const SlotSelection: React.FC = () => {
 								key={day.toISOString()}
 								type="button"
 								onClick={() => handleDaySelect(index)}
-								className={`min-w-[95px] rounded-2xl border px-4 py-3 text-left transition ${
+								className={`min-w-[80px] sm:min-w-[95px] rounded-2xl border px-3 py-2 sm:px-4 sm:py-3 text-left transition ${
 									isActive
 										? 'border-[#1f4f8a] bg-[#1f4f8a] text-white shadow-[0_30px_70px_-50px_rgba(21,52,109,0.6)]'
 										: 'border-[#d7e2f7] bg-[#f6f8ff] text-[#1b2b4b] hover:border-[#1f4f8a]'
