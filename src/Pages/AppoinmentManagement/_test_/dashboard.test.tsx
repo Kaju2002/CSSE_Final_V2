@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react'
 import Dashboard from '../Dashboard'
 
 // Basic render test
-
 describe('Dashboard', () => {
   test('renders welcome message', () => {
     render(<Dashboard />)

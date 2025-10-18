@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from '../../../ui/Button';
 import { useNavigate } from 'react-router-dom';
-import { QrReader } from 'react-qr-reader';
+import QrReader from "react-qr-scanner";
 import StaffNavbar from './StaffNavbar';
 
 const ScanHealthCard: React.FC = () => {

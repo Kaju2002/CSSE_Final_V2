@@ -14,7 +14,7 @@ import ViewAppointments from "./Pages/AppoinmentManagement/ViewAppointments";
 import MedicalRecords from "./Pages/AppoinmentManagement/MedicalRecords";
 import { AppointmentBookingProvider } from "./contexts/AppointmentBookingContext";
 import RoleBasedDashboard from "./Pages/RoleBasedDashboard";
-import FeedbackPage from "./Pages/Feedback/FeedbackPage";
+import FeedbackPage from "./Pages/AppoinmentManagement/FeedbackPage";
 import UserManagement from "./Pages/Admin/UserManagement";
 import StaffManagement from "./Pages/Admin/StaffManagement";
 import DoctorDashboard from "./Pages/Doctor/DoctorDashboard";

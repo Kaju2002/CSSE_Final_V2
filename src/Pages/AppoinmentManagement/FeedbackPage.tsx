@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Star as StarIcon } from 'lucide-react';
 
 type AppointmentInfo = {
   id: number;
@@ -22,22 +23,16 @@ const Star: React.FC<{
       onClick={() => onActivate(index)}
       aria-label={label ?? `${index} star`}
       aria-pressed={filled}
-      className={`w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-full transition-shadow transform hover:scale-105 active:scale-95 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2a6bb7] ${
-        filled ? 'bg-yellow-400 text-white' : 'bg-white text-gray-400 border border-[#eef3fb]'
-      }`}
+      className={`w-12 h-12 md:w-14 md:h-14 flex items-center justify-center bg-transparent rounded-full transition-all duration-150 transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2a6bb7]`}
+      style={{ boxShadow: filled ? '0 2px 8px 0 #facc15aa' : 'none' }}
     >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill={filled ? 'currentColor' : 'none'}
-        stroke={filled ? 'none' : 'currentColor'}
+      <StarIcon
+        size={36}
         strokeWidth={1.5}
-        className={filled ? 'text-white' : 'text-gray-400'}
+        fill={filled ? '#facc15' : 'none'}
+        className={filled ? 'text-yellow-400' : 'text-gray-300'}
         aria-hidden
-      >
-        <path d="M12 17.3l6.18 3.73-1.64-7.03L21 9.24l-7.19-.62L12 2 10.19 8.62 3 9.24l4.46 4.76L5.82 21z" />
-      </svg>
+      />
     </button>
   );
 };
@@ -128,8 +123,8 @@ const FeedbackPage: React.FC = () => {
   }
 
   return (
-    <main className="max-w-2xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
+  <main className="max-w-2xl mx-auto p-3 sm:p-6">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-2 sm:gap-0">
         <div>
           <h1 className="text-2xl font-semibold text-[#1b2b4b]">How was your visit?</h1>
           <p className="text-sm text-gray-500">Tell us about your experience with your doctor.</p>
@@ -138,18 +133,18 @@ const FeedbackPage: React.FC = () => {
       </div>
 
       <section className="bg-white rounded-2xl border border-[#e6eef9] p-4 mb-6 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">👩‍⚕️</div>
+        <div className="flex flex-col xs:flex-row items-start xs:items-center gap-3 xs:gap-4">
+          <div className="w-14 h-14 xs:w-16 xs:h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">👩‍⚕️</div>
           <div className="flex-1">
-            <div className="text-lg font-medium text-[#17325a]">{appointment?.doctorName ?? 'Dr. —'}</div>
-            <div className="text-sm text-gray-500">{appointment?.specialty ?? 'General Medicine'}</div>
+            <div className="text-base xs:text-lg font-medium text-[#17325a]">{appointment?.doctorName ?? 'Dr. —'}</div>
+            <div className="text-xs xs:text-sm text-gray-500">{appointment?.specialty ?? 'General Medicine'}</div>
             <div className="text-xs text-gray-400">{appointment?.date ?? ''}</div>
           </div>
-          <div className="text-xs text-gray-400">Visited</div>
+          <div className="text-xs text-gray-400 hidden xs:block">Visited</div>
         </div>
       </section>
 
-      <section className="bg-white rounded-2xl border border-[#e6eef9] p-6 shadow-sm mb-6">
+  <section className="bg-white rounded-2xl border border-[#e6eef9] p-4 sm:p-6 shadow-sm mb-6">
         <label className="block text-sm font-medium mb-3">Rate your experience</label>
         <div
           role="radiogroup"
@@ -172,7 +167,7 @@ const FeedbackPage: React.FC = () => {
             }
           }}
           onMouseLeave={() => setHover(null)}
-          className="flex items-center gap-3"
+          className="flex flex-wrap items-center gap-2 sm:gap-3"
         >
           {[1, 2, 3, 4, 5].map((n) => (
             <div key={n} className="flex-shrink-0" onMouseEnter={() => setHover(n)}>
@@ -195,14 +190,14 @@ const FeedbackPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-white rounded-2xl border border-[#e6eef9] p-6 shadow-sm mb-6">
+  <section className="bg-white rounded-2xl border border-[#e6eef9] p-4 sm:p-6 shadow-sm mb-6">
         <label className="block text-sm font-medium mb-2">Optional feedback</label>
         <textarea
           aria-label="Optional feedback"
           value={comment}
           onChange={(e) => setComment(e.target.value.slice(0, 500))}
           placeholder="What went well? What could we improve? (optional)"
-          className="w-full min-h-[120px] p-3 rounded-md border border-[#e6eef9] resize-none focus:outline-none focus:ring-2 focus:ring-[#dceefe]"
+          className="w-full min-h-[100px] p-2 sm:p-3 rounded-md border border-[#e6eef9] resize-none focus:outline-none focus:ring-2 focus:ring-[#dceefe] text-sm"
         />
         <div className="flex items-center justify-between mt-2">
           <div className="text-xs text-gray-400">Optional</div>
@@ -210,24 +205,24 @@ const FeedbackPage: React.FC = () => {
         </div>
       </section>
 
-      <footer className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-        <div className="flex gap-3 w-full sm:w-auto">
+      <footer className="flex flex-col sm:flex-row gap-3 items-center justify-between mt-2">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={submit}
             disabled={!rating || submitting}
-            className="flex-1 sm:flex-none bg-[#2a6bb7] text-white px-5 py-3 rounded-xl shadow-sm disabled:opacity-60"
+            className="flex-1 sm:flex-none bg-[#2a6bb7] text-white px-4 py-3 rounded-xl shadow-sm disabled:opacity-60 text-sm"
           >
             {submitting ? 'Sending…' : 'Send feedback'}
           </button>
           <button
             onClick={() => navigate('/appointments/new')}
-            className="flex-1 sm:flex-none border border-[#d8eaf8] px-5 py-3 rounded-xl"
+            className="flex-1 sm:flex-none border border-[#d8eaf8] px-4 py-3 rounded-xl text-sm"
           >
             Book follow-up ({formatSuggestedDate(appointment?.date)})
           </button>
         </div>
 
-        <button className="text-sm text-gray-500" onClick={() => navigate('/dashboard')}>
+        <button className="text-sm text-gray-500 mt-2 sm:mt-0" onClick={() => navigate('/dashboard')}>
           Skip for now
         </button>
       </footer>

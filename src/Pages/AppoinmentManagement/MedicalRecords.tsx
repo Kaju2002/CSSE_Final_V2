@@ -54,17 +54,17 @@ const Badge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 )
 
 const PatientCard: React.FC = () => (
-  <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#eef4ff] shadow-sm">
-    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">👩‍⚕️</div>
+  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-2xl border border-[#eef4ff] shadow-sm">
+    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">👩‍⚕️</div>
     <div className="flex-1">
-      <div className="flex items-center gap-3">
-        <h2 className="text-lg font-semibold text-[#17325a]">{records.patient.name}</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+        <h2 className="text-base sm:text-lg font-semibold text-[#17325a]">{records.patient.name}</h2>
         <Badge>{records.patient.medicalRecordNumber}</Badge>
       </div>
-      <div className="text-sm text-gray-500">DOB {new Date(records.patient.dob).toLocaleDateString()} · {records.patient.gender}</div>
-      <div className="text-sm text-gray-500">Primary care: {records.patient.primaryCare}</div>
+      <div className="text-xs sm:text-sm text-gray-500">DOB {new Date(records.patient.dob).toLocaleDateString()} · {records.patient.gender}</div>
+      <div className="text-xs sm:text-sm text-gray-500">Primary care: {records.patient.primaryCare}</div>
     </div>
-    <div className="text-right text-sm text-gray-500">Last visit: {new Date(records.summary.lastVisit).toLocaleDateString()}</div>
+    <div className="text-xs sm:text-right sm:text-sm text-gray-500">Last visit: {new Date(records.summary.lastVisit).toLocaleDateString()}</div>
   </div>
 )
 
@@ -72,11 +72,11 @@ const MedicalRecords: React.FC = () => {
   const [active, setActive] = useState<TabKey>('summary')
 
   return (
-    <div className="space-y-6">
+  <div className="space-y-6 px-2 sm:px-0">
       <PatientCard />
 
-      <div className="bg-white rounded-2xl border border-[#eef4ff] p-4 shadow-sm">
-        <nav className="flex overflow-x-auto gap-2 pb-3">
+  <div className="bg-white rounded-2xl border border-[#eef4ff] p-3 sm:p-4 shadow-sm">
+  <nav className="flex overflow-x-auto gap-2 pb-3 no-scrollbar">
           {tabs.map((t) => (
             <button
               key={t.key}
@@ -92,37 +92,37 @@ const MedicalRecords: React.FC = () => {
           ))}
         </nav>
 
-        <div className="mt-4">
+  <div className="mt-4">
           {active === 'summary' && (
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
               <div className="md:col-span-2 bg-white">
-                <h3 className="text-lg font-semibold mb-2">Active Problems</h3>
-                <ul className="space-y-2 text-sm text-gray-700">
+                <h3 className="text-base sm:text-lg font-semibold mb-2">Active Problems</h3>
+                <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
                   {records.summary.activeProblems.map((p: string) => (
-                      <li key={p} className="rounded-md border border-[#eef4ff] p-3">{p}</li>
+                      <li key={p} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">{p}</li>
                     ))}
                 </ul>
               </div>
 
-              <aside className="bg-white rounded-lg border border-[#eef4ff] p-4">
-                <div className="text-sm text-gray-500">Vitals</div>
-                <div className="mt-2 text-sm text-[#17325a]"><strong>{data.summary.weightKg} kg</strong> · {data.summary.heightCm} cm</div>
-                <div className="mt-3 text-sm text-gray-600">Blood type: <strong>{data.summary.bloodType}</strong></div>
+              <aside className="bg-white rounded-lg border border-[#eef4ff] p-3 sm:p-4">
+                <div className="text-xs sm:text-sm text-gray-500">Vitals</div>
+                <div className="mt-2 text-xs sm:text-sm text-[#17325a]"><strong>{data.summary.weightKg} kg</strong> · {data.summary.heightCm} cm</div>
+                <div className="mt-3 text-xs sm:text-sm text-gray-600">Blood type: <strong>{data.summary.bloodType}</strong></div>
               </aside>
             </section>
           )}
 
           {active === 'medications' && (
             <section>
-              <h3 className="text-lg font-semibold mb-3">Current Medications</h3>
-              <ul className="space-y-3">
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Current Medications</h3>
+              <ul className="space-y-2 sm:space-y-3">
                 {records.medications.map((m: Medication) => (
-                  <li key={m.id} className="flex items-center justify-between rounded-lg border border-[#eef4ff] p-3">
+                  <li key={m.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3 gap-1 sm:gap-0">
                     <div>
-                      <div className="font-medium text-sm">{m.name} <span className="text-xs text-gray-400">{m.dose}</span></div>
+                      <div className="font-medium text-xs sm:text-sm">{m.name} <span className="text-xs text-gray-400">{m.dose}</span></div>
                       <div className="text-xs text-gray-500">{m.frequency} · Prescribed: {m.prescriber}</div>
                     </div>
-                    <div className="text-sm text-gray-600">{m.status}</div>
+                    <div className="text-xs sm:text-sm text-gray-600">{m.status}</div>
                   </li>
                 ))}
               </ul>
@@ -131,15 +131,15 @@ const MedicalRecords: React.FC = () => {
 
           {active === 'allergies' && (
             <section>
-              <h3 className="text-lg font-semibold mb-3">Allergies</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Allergies</h3>
               <ul className="space-y-2">
                 {records.allergies.map((a: Allergy) => (
-                  <li key={a.id} className="rounded-lg border border-[#fff1f1] bg-[#fffaf9] p-3 flex items-center justify-between">
+                  <li key={a.id} className="rounded-lg border border-[#fff1f1] bg-[#fffaf9] p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between">
                     <div>
-                      <div className="font-medium">{a.substance}</div>
+                      <div className="font-medium text-xs sm:text-sm">{a.substance}</div>
                       <div className="text-xs text-gray-600">Reaction: {a.reaction}</div>
                     </div>
-                    <div className="text-sm text-[#b02a37]">{a.severity}</div>
+                    <div className="text-xs sm:text-sm text-[#b02a37]">{a.severity}</div>
                   </li>
                 ))}
               </ul>
@@ -148,15 +148,15 @@ const MedicalRecords: React.FC = () => {
 
           {active === 'labs' && (
             <section>
-              <h3 className="text-lg font-semibold mb-3">Recent Labs</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Recent Labs</h3>
               <div className="space-y-2">
                 {records.labs.map((l: Lab) => (
-                  <div key={l.id} className="rounded-lg border border-[#eef4ff] p-3 flex items-center justify-between">
+                  <div key={l.id} className="rounded-lg border border-[#eef4ff] p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between">
                     <div>
-                      <div className="font-medium">{l.test}</div>
+                      <div className="font-medium text-xs sm:text-sm">{l.test}</div>
                       <div className="text-xs text-gray-500">{l.date}</div>
                     </div>
-                    <div className="text-sm text-[#17325a]"><strong>{l.result}</strong> <div className="text-xs text-gray-400">{l.normalRange}</div></div>
+                    <div className="text-xs sm:text-sm text-[#17325a]"><strong>{l.result}</strong> <div className="text-xs text-gray-400">{l.normalRange}</div></div>
                   </div>
                 ))}
               </div>
@@ -165,10 +165,10 @@ const MedicalRecords: React.FC = () => {
 
           {active === 'immunizations' && (
             <section>
-              <h3 className="text-lg font-semibold mb-3">Immunizations</h3>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Immunizations</h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
                 {records.immunizations.map((i: Immunization) => (
-                  <li key={i.id} className="rounded-md border border-[#eef4ff] p-3">{i.vaccine} · {i.date}</li>
+                  <li key={i.id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">{i.vaccine} · {i.date}</li>
                 ))}
               </ul>
             </section>
@@ -176,16 +176,16 @@ const MedicalRecords: React.FC = () => {
 
           {active === 'documents' && (
             <section>
-              <h3 className="text-lg font-semibold mb-3">Documents</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Documents</h3>
               <ul className="space-y-2">
                 {records.documents.map((d: Document) => (
-                  <li key={d.id} className="flex items-center justify-between rounded-lg border border-[#eef4ff] p-3">
+                  <li key={d.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3">
                     <div>
-                      <div className="font-medium">{d.title}</div>
+                      <div className="font-medium text-xs sm:text-sm">{d.title}</div>
                       <div className="text-xs text-gray-500">{d.type} · {d.date}</div>
                     </div>
                     <div>
-                      <button className="text-sm text-[#2a6bb7]">View</button>
+                      <button className="text-xs sm:text-sm text-[#2a6bb7]">View</button>
                     </div>
                   </li>
                 ))}

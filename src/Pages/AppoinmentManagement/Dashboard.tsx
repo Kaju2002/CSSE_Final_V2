@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { BellRing, Calendar, CalendarCheck2, ClipboardList, FileText, FlaskConical, Pill } from 'lucide-react'
 
 const actionCards = [
@@ -45,6 +46,7 @@ const recentActivity = [
 ]
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate()
   return (
     <div className="space-y-8">
       <header className="space-y-1">
@@ -55,28 +57,36 @@ const Dashboard: React.FC = () => {
       </header>
 
       <section className="grid gap-6 md:grid-cols-3">
-        {actionCards.map(({ title, description, actionLabel, icon: Icon, variant }) => (
-          <article
-            key={title}
-            className="flex flex-col rounded-3xl border border-[#e1eaf5] bg-white p-6 text-center shadow-sm transition hover:shadow-md"
-          >
-            <div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#2a6bb7]">
-              <Icon className="h-12 w-12" strokeWidth={1.6} />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-[#1b2b4b]">{title}</h3>
-            <p className="mb-6 text-sm text-[#6f7d95]">{description}</p>
-            <button
-              type="button"
-              className={`mt-auto rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                variant === 'primary'
-                  ? 'border border-[#2a6bb7] bg-[#2a6bb7] text-white hover:bg-[#1f4f8d]'
-                  : 'border border-[#d8e3f3] bg-white text-[#1b2b4b] hover:border-[#2a6bb7] hover:text-[#2a6bb7]'
-              }`}
+        {actionCards.map(({ title, description, actionLabel, icon: Icon, variant }, idx) => {
+          // Button click handler for navigation
+          let handleClick = () => {};
+          if (idx === 0) handleClick = () => navigate('/appointments/new'); // Make New Appointment
+          if (idx === 1) handleClick = () => navigate('/appointments'); // My Appointments
+          if (idx === 2) handleClick = () => navigate('/medical-records'); // Medical Records
+          return (
+            <article
+              key={title}
+              className="flex flex-col rounded-3xl border border-[#e1eaf5] bg-white p-6 text-center shadow-sm transition hover:shadow-md"
             >
-              {actionLabel}
-            </button>
-          </article>
-        ))}
+              <div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-2xl bg-[#eef4ff] text-[#2a6bb7]">
+                <Icon className="h-12 w-12" strokeWidth={1.6} />
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-[#1b2b4b]">{title}</h3>
+              <p className="mb-6 text-sm text-[#6f7d95]">{description}</p>
+              <button
+                type="button"
+                className={`mt-auto rounded-xl px-4 py-2 text-sm font-semibold transition ${
+                  variant === 'primary'
+                    ? 'border border-[#2a6bb7] bg-[#2a6bb7] text-white hover:bg-[#1f4f8d]'
+                    : 'border border-[#d8e3f3] bg-white text-[#1b2b4b] hover:border-[#2a6bb7] hover:text-[#2a6bb7]'
+                }`}
+                onClick={handleClick}
+              >
+                {actionLabel}
+              </button>
+            </article>
+          )
+        })}
       </section>
 
       <section className="rounded-3xl border border-[#e1eaf5] bg-white p-6">
