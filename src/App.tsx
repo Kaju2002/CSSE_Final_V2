@@ -48,6 +48,7 @@ import KioskCardError from "./Pages/Kiosk/KioskCardError";
 import KioskPatientNotFound from "./Pages/Kiosk/KioskPatientNotFound";
 import KioskConnectionError from "./Pages/Kiosk/KioskConnectionError";
 import KioskManualPatientSearch from "./Pages/Kiosk/KioskManualPatientSearch";
+import ProfilePage from "./Shared_Ui/ProfilePage";
 
 function App() {
   return (
@@ -144,8 +145,12 @@ function App() {
                 </Route>
               </Route>
             </Route>
-            <Route path="patient/feedback/:appointmentId" element={<FeedbackPage />} />
+            <Route
+              path="patient/feedback/:appointmentId"
+              element={<FeedbackPage />}
+            />
             <Route path="medical-records" element={<MedicalRecords />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/login" element={<Login />} />
         </Routes>
