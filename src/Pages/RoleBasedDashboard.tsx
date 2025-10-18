@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminDashboard from './Admin/AdminDashboard';
-import Dashboard from './Dashboard';
+import Dashboard from './AppoinmentManagement/Dashboard';
 
 
 
