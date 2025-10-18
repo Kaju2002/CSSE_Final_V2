@@ -60,8 +60,8 @@ const Sidebar: React.FC = () => {
               to={item.to}
               end={item.end}
               className={({ isActive }) => `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                isActive ? 'bg-[#eef4ff] text-[#2a6bb7]' : 'hover:bg-[#f0f6ff] hover:text-[#2a6bb7]'
-              }`}
+                isActive ? 'bg-[#eef4ff] text-[#2a6bb7]' : 'hover:bg-[#f3f4f6] hover:text-[#1b2b4b]'}
+              `}
             >
               {item.icon}
               <span>{item.label}</span>

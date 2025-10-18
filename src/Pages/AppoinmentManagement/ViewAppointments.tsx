@@ -19,28 +19,28 @@ const appointments = [
 
 const ViewAppointments: React.FC = () => {
   return (
-    <div className="space-y-6">
+  <div className="space-y-6 px-2 sm:px-0">
       <header className="space-y-1">
-        <h2 className="text-3xl font-semibold text-[#1b2b4b]">My Appointments</h2>
-        <p className="text-sm text-[#6f7d95]">Review your upcoming visits and manage your schedule efficiently.</p>
+        <h2 className="text-2xl sm:text-3xl font-semibold text-[#1b2b4b]">My Appointments</h2>
+        <p className="text-xs sm:text-sm text-[#6f7d95]">Review your upcoming visits and manage your schedule efficiently.</p>
       </header>
 
-      <div className="space-y-4">
+  <div className="space-y-4">
         {appointments.map((appointment) => (
           <article
             key={appointment.id}
-            className="flex flex-col gap-2 rounded-3xl border border-[#e1eaf5] bg-white px-6 py-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            className="flex flex-col gap-2 rounded-3xl border border-[#e1eaf5] bg-white px-3 py-4 sm:px-6 sm:py-5 shadow-sm transition hover:shadow-md"
           >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="text-lg font-semibold text-[#1b2b4b]">{appointment.doctor}</h3>
+            <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-2 sm:gap-3">
+              <h3 className="text-base sm:text-lg font-semibold text-[#1b2b4b]">{appointment.doctor}</h3>
               <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-semibold text-[#2a6bb7]">{appointment.location}</span>
             </div>
-            <p className="text-sm text-[#1f2a44]">{appointment.date} at {appointment.time}</p>
-            <div className="flex flex-wrap gap-3 text-sm">
-              <button type="button" className="rounded-2xl border border-[#2a6bb7] px-4 py-2 text-sm font-semibold text-[#2a6bb7] transition hover:bg-[#2a6bb7] hover:text-white">
+            <p className="text-xs sm:text-sm text-[#1f2a44]">{appointment.date} at {appointment.time}</p>
+            <div className="flex flex-row flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm">
+              <button type="button" className="rounded-2xl border border-[#2a6bb7] px-4 py-2 font-semibold text-[#2a6bb7] transition hover:bg-[#2a6bb7] hover:text-white">
                 Reschedule
               </button>
-              <button type="button" className="rounded-2xl border border-transparent px-4 py-2 text-sm font-semibold text-[#c0392b] transition hover:bg-[#f9e9e9]">
+              <button type="button" className="rounded-2xl border border-transparent px-4 py-2 font-semibold text-[#c0392b] transition hover:bg-[#f9e9e9]">
                 Cancel Appointment
               </button>
             </div>

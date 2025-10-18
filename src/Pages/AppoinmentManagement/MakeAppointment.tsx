@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, Phone, Stethoscope } from 'lucide-react'
+import MobileDropdown from '../../Shared_Ui/MobileDropdown';
 import SearchBar from '../../ui/SearchBar'
 import Card from '../../ui/Card'
 import Button from '../../ui/Button'
@@ -146,53 +147,26 @@ const MakeAppointment: React.FC = () => {
           className="col-span-full md:col-span-1"
         />
         <div className="relative flex h-12 w-full items-center">
-          <select
-            value={distance}
-            onChange={(event) => setDistance(event.target.value)}
-            className="h-full w-full appearance-none rounded-full border border-transparent bg-white px-5 pr-12 text-sm font-medium text-[#1f2a44] shadow-[0_12px_28px_-18px_rgba(42,107,183,0.3)] ring-1 ring-[#d8e3f3] transition focus:border-[#2a6bb7] focus:outline-none focus:ring-2 focus:ring-[#2a6bb7]"
-          >
-            {distanceFilters.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            className="pointer-events-none absolute right-5 h-4 w-4 text-[#60719b]"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
+          {/* Custom dropdown for distance (all screens) */}
+          <div className="w-full">
+            <MobileDropdown
+              options={distanceFilters}
+              value={distance}
+              onChange={setDistance}
+              placeholder="Any Distance"
+            />
+          </div>
         </div>
         <div className="relative flex h-12 w-full items-center">
-          <select
-            value={speciality}
-            onChange={(event) => setSpeciality(event.target.value)}
-            className="h-full w-full appearance-none rounded-full border border-transparent bg-white px-5 pr-12 text-sm font-medium text-[#1f2a44] shadow-[0_12px_28px_-18px_rgba(42,107,183,0.3)] ring-1 ring-[#d8e3f3] transition focus:border-[#2a6bb7] focus:outline-none focus:ring-2 focus:ring-[#2a6bb7]"
-          >
-            <option value="any">Any Speciality</option>
-            {specialityOptions
-              .filter((option) => option !== 'any')
-              .map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-          </select>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            className="pointer-events-none absolute right-5 h-4 w-4 text-[#60719b]"
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
+          {/* Custom dropdown for speciality (all screens) */}
+          <div className="w-full">
+            <MobileDropdown
+              options={specialityOptions.map(opt => ({ label: opt === 'any' ? 'Any Speciality' : opt, value: opt }))}
+              value={speciality}
+              onChange={setSpeciality}
+              placeholder="Any Speciality"
+            />
+          </div>
         </div>
       </div>
 
