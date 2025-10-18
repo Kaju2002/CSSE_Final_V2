@@ -1,0 +1,87 @@
+[
+  {
+    "id": "u_1",
+    "name": "Chamodi Dilki",
+    "role": "Admin",
+    "email": "chamodi@example.org",
+    "active": true,
+    "createdAt": "2024-02-12T09:24:00.000Z"
+  },
+  {
+    "id": "u_2",
+    "name": "Dr. Oliver Bennett",
+    "role": "Doctor",
+    "email": "oliver.bennett@hospital.org",
+    "active": true,
+    "createdAt": "2023-11-03T10:00:00.000Z"
+  },
+  {
+    "id": "u_3",
+    "name": "Nurse Cindy",
+    "role": "Nurse",
+    "email": "cindy.nurse@hospital.org",
+    "active": true,
+    "createdAt": "2024-01-17T14:30:00.000Z"
+  },
+  {
+    "id": "u_4",
+    "name": "Receptionist Sam",
+    "role": "Staff",
+    "email": "sam.reception@hospital.org",
+    "active": false,
+    "createdAt": "2024-03-05T08:15:00.000Z"
+  },
+  {
+    "id": "u_5",
+    "name": "Aisha Khan",
+    "role": "Admin",
+    "email": "aisha.khan@hospital.org",
+    "active": true,
+    "createdAt": "2024-04-20T11:05:00.000Z"
+  },
+  {
+    "id": "u_6",
+    "name": "Marcus Lee",
+    "role": "Doctor",
+    "email": "marcus.lee@hospital.org",
+    "active": true,
+    "createdAt": "2024-05-02T13:25:00.000Z"
+  }
+  ,
+  {
+    "id": "p_1001",
+    "name": "Amina Rahman",
+    "role": "Patient",
+    "email": "amina.rahman@example.com",
+    "active": true,
+    "mrn": "MRN-001234",
+    "dob": "1990-07-12",
+    "phone": "+1-555-0123",
+    "gender": "Female",
+    "createdAt": "2024-06-15T09:00:00.000Z"
+  },
+  {
+    "id": "p_1002",
+    "name": "Rahul Sharma",
+    "role": "Patient",
+    "email": "rahul.sharma@example.com",
+    "active": true,
+    "mrn": "MRN-001235",
+    "dob": "1985-11-03",
+    "phone": "+1-555-0456",
+    "gender": "Male",
+    "createdAt": "2024-06-18T11:20:00.000Z"
+  },
+  {
+    "id": "p_1003",
+    "name": "Sofia Martinez",
+    "role": "Patient",
+    "email": "sofia.martinez@example.com",
+    "active": false,
+    "mrn": "MRN-001236",
+    "dob": "1978-03-27",
+    "phone": "+1-555-0789",
+    "gender": "Female",
+    "createdAt": "2024-06-20T15:00:00.000Z"
+  }
+]

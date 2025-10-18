@@ -1,0 +1,32 @@
+[
+  {
+    "id": "lab-001",
+    "patientId": "pt-1001",
+    "patientName": "John Walker",
+    "test": "HbA1c",
+    "result": "7.2%",
+    "normalRange": "< 5.7%",
+    "date": "2025-10-17T07:30:00.000Z",
+    "status": "Final"
+  },
+  {
+    "id": "lab-002",
+    "patientId": "pt-1005",
+    "patientName": "Michael Zhang",
+    "test": "Creatinine",
+    "result": "1.1 mg/dL",
+    "normalRange": "0.6 - 1.2 mg/dL",
+    "date": "2025-10-16T14:00:00.000Z",
+    "status": "Preliminary"
+  },
+  {
+    "id": "lab-003",
+    "patientId": "pt-1002",
+    "patientName": "Marisol Gomez",
+    "test": "Lipid Panel",
+    "result": "Total 198 mg/dL",
+    "normalRange": "< 200 mg/dL",
+    "date": "2025-10-15T09:20:00.000Z",
+    "status": "Final"
+  }
+]

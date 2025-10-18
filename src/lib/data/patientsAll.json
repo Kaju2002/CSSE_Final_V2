@@ -1,0 +1,42 @@
+[
+  {
+    "id": "pt-1001",
+    "name": "John Walker",
+    "dob": "1971-04-12",
+    "age": 54,
+    "lastVisit": "2025-10-15",
+    "primaryProblem": "Heart Failure",
+    "contact": "(555) 101-2020",
+    "mrn": "MR-2025-1001"
+  },
+  {
+    "id": "pt-1002",
+    "name": "Marisol Gomez",
+    "dob": "1958-09-02",
+    "age": 67,
+    "lastVisit": "2025-09-22",
+    "primaryProblem": "Ischemic Heart Disease",
+    "contact": "(555) 303-4040",
+    "mrn": "MR-2025-1002"
+  },
+  {
+    "id": "pt-1003",
+    "name": "Ethan Clark",
+    "dob": "1986-06-08",
+    "age": 39,
+    "lastVisit": "2025-08-30",
+    "primaryProblem": "Arrhythmia",
+    "contact": "(555) 505-6060",
+    "mrn": "MR-2025-1003"
+  },
+  {
+    "id": "pt-1004",
+    "name": "Sana Rahman",
+    "dob": "1980-02-21",
+    "age": 45,
+    "lastVisit": "2025-10-10",
+    "primaryProblem": "Post-op care",
+    "contact": "(555) 707-8080",
+    "mrn": "MR-2025-1004"
+  }
+]

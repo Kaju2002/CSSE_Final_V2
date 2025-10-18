@@ -1,0 +1,246 @@
+[
+  {
+    "id": "city-general",
+    "name": "City General Hospital",
+    "address": "123 Healthcare Blvd, Metropolis, State 12345",
+    "phone": "(555) 123-4567",
+    "image": "https://images.unsplash.com/photo-1576765608508-6a3819d0b36b?auto=format&fit=crop&w=800&q=80",
+    "distance": "2.1 mi",
+    "specialities": ["Cardiology", "Neurology", "Pediatrics"],
+    "type": "Government"
+  },
+  {
+    "id": "urban-medical",
+    "name": "Urban Medical Center",
+    "address": "456 Oak Street, Metropolis, State 12345",
+    "phone": "(555) 987-6543",
+    "image": "https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=80",
+    "distance": "4.5 mi",
+    "specialities": ["Orthopedics", "Dermatology", "Oncology"],
+    "type": "Private"
+  },
+  {
+    "id": "metropolis-community",
+    "name": "Metropolis Community Clinic",
+    "address": "789 Pine Avenue, Metropolis, State 12345",
+    "phone": "(555) 246-8109",
+    "image": "https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=800&q=80",
+    "distance": "6.2 mi",
+    "specialities": ["Family Medicine", "Immunization", "Diagnostics"],
+    "type": "Government"
+  },
+  {
+    "id": "summit-health",
+    "name": "Summit Health Hospital",
+    "address": "101 Mountain View, Metropolis, State 12345",
+    "phone": "(555) 112-2334",
+    "image": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "distance": "8.0 mi",
+    "specialities": ["Cardiology", "Emergency", "Maternity"],
+    "type": "Private"
+  },
+  {
+    "id": "eastside-care",
+    "name": "Eastside Care Hospital",
+    "address": "222 Riverfront Way, Metropolis, State 12345",
+    "phone": "(555) 334-4556",
+    "image": "https://images.unsplash.com/photo-1460672985063-6764ac8b9c74?auto=format&fit=crop&w=800&q=80",
+    "distance": "10.4 mi",
+    "specialities": ["Oncology", "Cardiology", "Rehabilitation"],
+    "type": "Private"
+  },
+  {
+    "id": "central-park",
+    "name": "Central Park Clinic",
+    "address": "333 Garden Lane, Metropolis, State 12345",
+    "phone": "(555) 667-7889",
+    "image": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
+    "distance": "12.7 mi",
+    "specialities": ["Family Medicine", "Pediatrics", "Radiology"],
+    "type": "Government"
+  },
+  {
+    "id": "riverside-regional",
+    "name": "Riverside Regional Hospital",
+    "address": "12 River Park Drive, Metropolis, State 12345",
+    "phone": "(555) 441-2200",
+    "image": "https://images.unsplash.com/photo-1504439468489-c8920d796a29?auto=format&fit=crop&w=800&q=80",
+    "distance": "3.3 mi",
+    "specialities": ["Emergency", "Cardiology", "Stroke Care"],
+    "type": "Government"
+  },
+  {
+    "id": "skyline-specialty",
+    "name": "Skyline Specialty Center",
+    "address": "890 Skyline Terrace, Metropolis, State 12345",
+    "phone": "(555) 778-9988",
+    "image": "https://images.unsplash.com/photo-1576765974102-905eb29db5c8?auto=format&fit=crop&w=800&q=80",
+    "distance": "5.8 mi",
+    "specialities": ["Oncology", "Radiology", "Endocrinology"],
+    "type": "Private"
+  },
+  {
+    "id": "northside-womens",
+    "name": "Northside Women’s Hospital",
+    "address": "75 Willow Grove Road, Metropolis, State 12345",
+    "phone": "(555) 205-7788",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80",
+    "distance": "7.4 mi",
+    "specialities": ["Maternity", "Neonatal", "Gynecology"],
+    "type": "Private"
+  },
+  {
+    "id": "heritage-children",
+    "name": "Heritage Children’s Hospital",
+    "address": "58 Heritage Circle, Metropolis, State 12345",
+    "phone": "(555) 890-3345",
+    "image": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "distance": "9.1 mi",
+    "specialities": ["Pediatrics", "Immunization", "Surgery"],
+    "type": "Government"
+  },
+  {
+    "id": "westbrook-trauma",
+    "name": "Westbrook Trauma Center",
+    "address": "444 Harbor Road, Metropolis, State 12345",
+    "phone": "(555) 430-1122",
+    "image": "https://images.unsplash.com/photo-1493836512294-502baa1986e2?auto=format&fit=crop&w=800&q=80",
+    "distance": "11.6 mi",
+    "specialities": ["Trauma Care", "Emergency", "Surgery"],
+    "type": "Government"
+  },
+  {
+    "id": "lakeside-rehab",
+    "name": "Lakeside Rehabilitation Institute",
+    "address": "900 Lakeside Avenue, Metropolis, State 12345",
+    "phone": "(555) 765-3344",
+    "image": "https://images.unsplash.com/photo-1529900748600-23475c11f7bb?auto=format&fit=crop&w=800&q=80",
+    "distance": "13.2 mi",
+    "specialities": [
+      "Rehabilitation",
+      "Physical Therapy",
+      "Occupational Therapy"
+    ],
+    "type": "Private"
+  },
+  {
+    "id": "meadowbrook-family",
+    "name": "Meadowbrook Family Health",
+    "address": "210 Meadowbrook Lane, Metropolis, State 12345",
+    "phone": "(555) 805-6677",
+    "image": "https://images.unsplash.com/photo-1596547619264-7400845d836b?auto=format&fit=crop&w=800&q=80",
+    "distance": "14.4 mi",
+    "specialities": ["Family Medicine", "Pediatrics", "Wellness"],
+    "type": "Private"
+  },
+  {
+    "id": "beacon-heart",
+    "name": "Beacon Heart Institute",
+    "address": "980 Beacon Parkway, Metropolis, State 12345",
+    "phone": "(555) 221-9087",
+    "image": "https://images.unsplash.com/photo-1483721310020-03333e577078?auto=format&fit=crop&w=800&q=80",
+    "distance": "6.7 mi",
+    "specialities": ["Cardiology", "Heart Surgery", "Imaging"],
+    "type": "Private"
+  },
+  {
+    "id": "green-valley",
+    "name": "Green Valley Medical Campus",
+    "address": "450 Green Valley Road, Metropolis, State 12345",
+    "phone": "(555) 990-3001",
+    "image": "https://images.unsplash.com/photo-1524675770675-9275541bb129?auto=format&fit=crop&w=800&q=80",
+    "distance": "4.9 mi",
+    "specialities": ["Primary Care", "Diagnostics", "Pharmacy"],
+    "type": "Government"
+  },
+  {
+    "id": "metro-orthopedic",
+    "name": "Metro Orthopedic Hospital",
+    "address": "602 Industrial Drive, Metropolis, State 12345",
+    "phone": "(555) 872-4555",
+    "image": "https://images.unsplash.com/photo-1527137342181-19aab11a8ee8?auto=format&fit=crop&w=800&q=80",
+    "distance": "8.6 mi",
+    "specialities": ["Orthopedics", "Sports Medicine", "Rehabilitation"],
+    "type": "Private"
+  },
+  {
+    "id": "valley-view",
+    "name": "Valley View Medical Center",
+    "address": "303 Valley View Road, Metropolis, State 12345",
+    "phone": "(555) 654-7789",
+    "image": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+    "distance": "7.9 mi",
+    "specialities": ["General Surgery", "Radiology", "Laboratory"],
+    "type": "Government"
+  },
+  {
+    "id": "sunrise-oncology",
+    "name": "Sunrise Oncology Center",
+    "address": "120 Sunrise Boulevard, Metropolis, State 12345",
+    "phone": "(555) 870-1245",
+    "image": "https://images.unsplash.com/photo-1584435731363-d3988e1ad070?auto=format&fit=crop&w=800&q=80",
+    "distance": "9.8 mi",
+    "specialities": ["Oncology", "Radiology", "Support Services"],
+    "type": "Private"
+  },
+  {
+    "id": "grand-harbor",
+    "name": "Grand Harbor Medical Pavilion",
+    "address": "15 Harborfront Plaza, Metropolis, State 12345",
+    "phone": "(555) 220-8899",
+    "image": "https://images.unsplash.com/photo-1612832021101-1dc80f792b97?auto=format&fit=crop&w=800&q=80",
+    "distance": "11.2 mi",
+    "specialities": ["Diagnostics", "Cardiology", "Dermatology"],
+    "type": "Private"
+  },
+  {
+    "id": "cornerstone-geriatrics",
+    "name": "Cornerstone Center for Geriatrics",
+    "address": "480 Cornerstone Avenue, Metropolis, State 12345",
+    "phone": "(555) 932-4455",
+    "image": "https://images.unsplash.com/photo-1583997052301-27222da28c83?auto=format&fit=crop&w=800&q=80",
+    "distance": "5.5 mi",
+    "specialities": ["Geriatrics", "Memory Care", "Chronic Care"],
+    "type": "Government"
+  },
+  {
+    "id": "liberty-public",
+    "name": "Liberty Public Health Center",
+    "address": "60 Liberty Street, Metropolis, State 12345",
+    "phone": "(555) 430-5566",
+    "image": "https://images.unsplash.com/photo-1587355760421-77aaa397e479?auto=format&fit=crop&w=800&q=80",
+    "distance": "6.0 mi",
+    "specialities": ["Primary Care", "Immunization", "Community Health"],
+    "type": "Government"
+  },
+  {
+    "id": "oakridge-wellness",
+    "name": "Oakridge Wellness Hospital",
+    "address": "670 Oakridge Parkway, Metropolis, State 12345",
+    "phone": "(555) 734-2211",
+    "image": "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+    "distance": "12.1 mi",
+    "specialities": ["Wellness", "Cardiology", "Nutrition"],
+    "type": "Private"
+  },
+  {
+    "id": "harborview-womens",
+    "name": "Harborview Women & Children",
+    "address": "845 Harborview Drive, Metropolis, State 12345",
+    "phone": "(555) 978-4433",
+    "image": "https://images.unsplash.com/photo-1559757175-5700dde6756b?auto=format&fit=crop&w=800&q=80",
+    "distance": "13.8 mi",
+    "specialities": ["Maternity", "Pediatrics", "Family Medicine"],
+    "type": "Government"
+  },
+  {
+    "id": "silverline-clinic",
+    "name": "Silverline Specialty Clinic",
+    "address": "92 Silverline Way, Metropolis, State 12345",
+    "phone": "(555) 278-9933",
+    "image": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "distance": "15.3 mi",
+    "specialities": ["Dermatology", "Endocrinology", "Allergy"],
+    "type": "Private"
+  }
+]

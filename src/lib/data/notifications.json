@@ -1,0 +1,23 @@
+[
+  {
+    "id": "n-1",
+    "type": "lab",
+    "title": "New lab results available",
+    "summary": "HbA1c elevated for John Walker",
+    "time": "2025-10-17T07:40:00.000Z"
+  },
+  {
+    "id": "n-2",
+    "type": "message",
+    "title": "Message from Nurse Cindy",
+    "summary": "Pre-op checklist completed for Michael Zhang",
+    "time": "2025-10-17T06:55:00.000Z"
+  },
+  {
+    "id": "n-3",
+    "type": "system",
+    "title": "OR schedule updated",
+    "summary": "Surgery slot moved to 14:00",
+    "time": "2025-10-16T22:15:00.000Z"
+  }
+]

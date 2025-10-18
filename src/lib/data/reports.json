@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "monthlyRevenue": 124500,
+    "monthlyVisits": 8420,
+    "avgLengthOfStay": 3.8,
+    "outpatientAppointments": 6120
+  },
+  "monthlyRevenueSeries": [95000, 102000, 110500, 98000, 105200, 120000, 124500, 118000, 121500, 125000, 130000, 128500],
+  "monthlyVisitsSeries": [7000, 7200, 7300, 7100, 7400, 7800, 8420, 8000, 8100, 8300, 8500, 8600],
+  "topDiagnoses": [
+    { "name": "Upper respiratory infection", "count": 820 },
+    { "name": "Hypertension", "count": 610 },
+    { "name": "Diabetes mellitus", "count": 540 },
+    { "name": "Fracture", "count": 320 }
+  ],
+  "recentReports": [
+    { "id": "r_1", "title": "Monthly Financials - July", "date": "2024-07-02" },
+    { "id": "r_2", "title": "ER Wait Times - July", "date": "2024-07-03" },
+    { "id": "r_3", "title": "Admissions by Department - July", "date": "2024-07-04" }
+  ]
+}

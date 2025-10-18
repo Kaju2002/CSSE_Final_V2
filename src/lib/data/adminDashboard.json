@@ -1,0 +1,15 @@
+{
+  "metrics": {
+    "todayVisits": 342,
+    "admissions": 27,
+    "avgWaitMin": 18,
+    "occupancy": 78
+  },
+  "visitsSeries": [120, 150, 180, 210, 190, 230, 342],
+  "departments": [
+    { "name": "Outpatient", "count": 220 },
+    { "name": "Emergency", "count": 111 },
+    { "name": "Pediatrics", "count": 134 },
+    { "name": "Radiology", "count": 198 }
+  ]
+}

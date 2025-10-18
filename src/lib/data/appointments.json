@@ -1,0 +1,52 @@
+[
+  {
+    "id": "apt-20251017-01",
+    "time": "08:30",
+    "patientId": "pt-1001",
+    "patientName": "John Walker",
+    "age": 54,
+    "reason": "Follow-up: heart failure",
+    "status": "Checked In",
+    "room": "Consult 3"
+  },
+  {
+    "id": "apt-20251017-02",
+    "time": "09:00",
+    "patientId": "pt-1002",
+    "patientName": "Marisol Gomez",
+    "age": 67,
+    "reason": "Chest pain assessment",
+    "status": "Waiting",
+    "room": "Triage"
+  },
+  {
+    "id": "apt-20251017-03",
+    "time": "09:45",
+    "patientId": "pt-1003",
+    "patientName": "Ethan Clark",
+    "age": 39,
+    "reason": "Arrhythmia consult",
+    "status": "Waiting",
+    "room": "Consult 1"
+  },
+  {
+    "id": "apt-20251017-04",
+    "time": "10:30",
+    "patientId": "pt-1004",
+    "patientName": "Sana Rahman",
+    "age": 45,
+    "reason": "Post-op follow-up",
+    "status": "Cancelled",
+    "room": "—"
+  },
+  {
+    "id": "apt-20251017-05",
+    "time": "11:15",
+    "patientId": "pt-1005",
+    "patientName": "Michael Zhang",
+    "age": 62,
+    "reason": "ICD check",
+    "status": "Waiting",
+    "room": "Device Lab"
+  }
+]

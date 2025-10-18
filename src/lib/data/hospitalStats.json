@@ -1,0 +1,17 @@
+{
+  "metrics": {
+    "bedsOccupied": 124,
+    "bedsTotal": 150,
+    "todayAdmissions": 28,
+    "todayDischarges": 15,
+    "avgWaitMinutes": 42
+  },
+  "admissionsSeries": [5, 8, 6, 10, 12, 9, 7, 11, 13, 9, 8, 10, 12, 14],
+  "departments": [
+    { "name": "Emergency", "count": 42 },
+    { "name": "Cardiology", "count": 28 },
+    { "name": "Pediatrics", "count": 21 },
+    { "name": "Orthopedics", "count": 17 },
+    { "name": "Radiology", "count": 16 }
+  ]
+}

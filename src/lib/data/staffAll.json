@@ -1,0 +1,62 @@
+[
+  {
+    "id": "s_1",
+    "name": "Dr. Oliver Bennett",
+    "role": "Doctor",
+    "department": "Cardiology",
+    "shift": "Morning",
+    "email": "oliver.bennett@hospital.org",
+    "phone": "+1-555-1001",
+    "active": true,
+    "hireDate": "2019-08-12",
+    "location": "Main Hospital"
+  },
+  {
+    "id": "s_2",
+    "name": "Nurse Cindy",
+    "role": "Nurse",
+    "department": "Emergency",
+    "shift": "Night",
+    "email": "cindy.nurse@hospital.org",
+    "phone": "+1-555-1002",
+    "active": true,
+    "hireDate": "2021-03-22",
+    "location": "Main Hospital"
+  },
+  {
+    "id": "s_3",
+    "name": "Receptionist Sam",
+    "role": "Receptionist",
+    "department": "Front Desk",
+    "shift": "Morning",
+    "email": "sam.reception@hospital.org",
+    "phone": "+1-555-1003",
+    "active": false,
+    "hireDate": "2022-07-05",
+    "location": "Outpatient Clinic"
+  },
+  {
+    "id": "s_4",
+    "name": "Dr. Marcus Lee",
+    "role": "Doctor",
+    "department": "Pediatrics",
+    "shift": "Afternoon",
+    "email": "marcus.lee@hospital.org",
+    "phone": "+1-555-1004",
+    "active": true,
+    "hireDate": "2018-11-10",
+    "location": "Children's Wing"
+  },
+  {
+    "id": "s_5",
+    "name": "Aisha Khan",
+    "role": "Admin",
+    "department": "Administration",
+    "shift": "Morning",
+    "email": "aisha.khan@hospital.org",
+    "phone": "+1-555-1005",
+    "active": true,
+    "hireDate": "2020-04-18",
+    "location": "Main Hospital"
+  }
+]

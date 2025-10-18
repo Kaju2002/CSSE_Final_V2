@@ -1,0 +1,294 @@
+[
+	{
+		"id": "dr-elena-petrova",
+		"name": "Dr. Elena Petrova",
+		"title": "Cardiology Specialist",
+		"rating": 4.9,
+		"reviewCount": 128,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Expert in cardiac rhythm disorders and preventive cardiology with over 15 years of clinical experience. Leads comprehensive heart health programs, mentors junior cardiologists, and collaborates with multidisciplinary teams to deliver holistic care. Passionate about patient education and long-term wellbeing.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "cardiology", "name": "Cardiology" },
+			{ "slug": "heart-surgery", "name": "Heart Surgery" }
+		]
+	},
+	{
+		"id": "dr-nina-patel",
+		"name": "Dr. Nina Patel",
+		"title": "Interventional Cardiologist",
+		"rating": 4.8,
+		"reviewCount": 104,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-23",
+		"bio": "Performs complex cardiac interventions with a focus on minimally invasive procedures and rapid recovery.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "cardiology", "name": "Cardiology" },
+			{ "slug": "interventional-cardiology", "name": "Interventional Cardiology" }
+		]
+	},
+	{
+		"id": "dr-oliver-bennett",
+		"name": "Dr. Oliver Bennett",
+		"title": "Heart Failure Specialist",
+		"rating": 4.8,
+		"reviewCount": 118,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Focuses on advanced heart failure therapies and cardiac rehabilitation programs tailored to each patient.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "cardiology", "name": "Cardiology" },
+			{ "slug": "rehabilitation", "name": "Rehabilitation" }
+		]
+	},
+	{
+		"id": "dr-amelia-park",
+		"name": "Dr. Amelia Park",
+		"title": "Electrophysiologist",
+		"rating": 4.7,
+		"reviewCount": 101,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-24",
+		"bio": "Leads minimally invasive procedures to correct heart rhythm conditions with cutting-edge technology.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "cardiology", "name": "Cardiology" }
+		]
+	},
+	{
+		"id": "dr-jacob-reid",
+		"name": "Dr. Jacob Reid",
+		"title": "Cardiothoracic Surgeon",
+		"rating": 4.9,
+		"reviewCount": 167,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-25",
+		"bio": "Performs complex cardiothoracic surgeries with an emphasis on enhanced recovery pathways and patient comfort.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "cardiology", "name": "Cardiology" },
+			{ "slug": "heart-surgery", "name": "Heart Surgery" }
+		]
+	},
+	{
+		"id": "dr-david-kim",
+		"name": "Dr. David Kim",
+		"title": "Pediatric Consultant",
+		"rating": 4.8,
+		"reviewCount": 95,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-20",
+		"bio": "Specializing in child development and common childhood illnesses. Dedicated to creating a comfortable environment for young patients.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "pediatrics", "name": "Pediatrics" }
+		]
+	},
+	{
+		"id": "dr-liam-oconnor",
+		"name": "Dr. Liam O'Connor",
+		"title": "Neonatal Specialist",
+		"rating": 4.7,
+		"reviewCount": 87,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Supports premature infants and their families with evidence-based neonatal care and long-term development planning.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "pediatrics", "name": "Pediatrics" },
+			{ "slug": "neonatal", "name": "Neonatal" }
+		]
+	},
+	{
+		"id": "dr-priya-kumar",
+		"name": "Dr. Priya Kumar",
+		"title": "Child Wellness Expert",
+		"rating": 4.6,
+		"reviewCount": 90,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Leads preventive care programs and long-term wellness plans for growing children and families.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "pediatrics", "name": "Pediatrics" },
+			{ "slug": "immunization", "name": "Immunization" }
+		]
+	},
+	{
+		"id": "dr-sofia-morales",
+		"name": "Dr. Sofia Morales",
+		"title": "Adolescent Health Specialist",
+		"rating": 4.7,
+		"reviewCount": 102,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-22",
+		"bio": "Supports teens through preventive screenings and holistic care to promote lifelong wellbeing.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "pediatrics", "name": "Pediatrics" }
+		]
+	},
+	{
+		"id": "dr-anya-sharma",
+		"name": "Dr. Anya Sharma",
+		"title": "Dermatology Expert",
+		"rating": 4.7,
+		"reviewCount": 110,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-21",
+		"bio": "Focuses on advanced skin treatments and cosmetic dermatology. Committed to personalized care for all skin types.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "dermatology", "name": "Dermatology" }
+		]
+	},
+	{
+		"id": "dr-emilia-rossi",
+		"name": "Dr. Emilia Rossi",
+		"title": "Dermatologic Surgeon",
+		"rating": 4.9,
+		"reviewCount": 142,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-19",
+		"bio": "Specializes in skin cancer treatment and cosmetic procedures with a focus on patient comfort and lasting outcomes.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "dermatology", "name": "Dermatology" },
+			{ "slug": "cosmetic-dermatology", "name": "Cosmetic Dermatology" }
+		]
+	},
+	{
+		"id": "dr-james-carter",
+		"name": "Dr. James Carter",
+		"title": "General Dermatologist",
+		"rating": 4.6,
+		"reviewCount": 88,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Treats a wide range of skin conditions with emphasis on clear communication and tailored regimens.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "dermatology", "name": "Dermatology" }
+		]
+	},
+	{
+		"id": "dr-mark-johnson",
+		"name": "Dr. Mark Johnson",
+		"title": "Neurology Specialist",
+		"rating": 4.6,
+		"reviewCount": 88,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Specializes in headache disorders and neurodegenerative diseases. Utilizes cutting-edge diagnostic techniques.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "neurology", "name": "Neurology" }
+		]
+	},
+	{
+		"id": "dr-selene-ito",
+		"name": "Dr. Selene Ito",
+		"title": "Movement Disorder Specialist",
+		"rating": 4.8,
+		"reviewCount": 96,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-27",
+		"bio": "Provides advanced care plans for Parkinson's and movement disorders with a multidisciplinary team.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "neurology", "name": "Neurology" }
+		]
+	},
+	{
+		"id": "dr-farah-ahmed",
+		"name": "Dr. Farah Ahmed",
+		"title": "Neuro Rehabilitation Expert",
+		"rating": 4.7,
+		"reviewCount": 111,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Guides patients through recovery from stroke and spinal injuries with evidence-based therapies.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "neurology", "name": "Neurology" },
+			{ "slug": "rehabilitation", "name": "Rehabilitation" }
+		]
+	},
+	{
+		"id": "dr-sarah-chen",
+		"name": "Dr. Sarah Chen",
+		"title": "Orthopedic Surgeon",
+		"rating": 4.9,
+		"reviewCount": 152,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-22",
+		"bio": "Leading expert in joint replacement and sports injury recovery. Dedicated to restoring mobility and improving quality of life.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "orthopedics", "name": "Orthopedics" },
+			{ "slug": "sports-medicine", "name": "Sports Medicine" }
+		]
+	},
+	{
+		"id": "dr-hassan-farooq",
+		"name": "Dr. Hassan Farooq",
+		"title": "Sports Medicine Physician",
+		"rating": 4.6,
+		"reviewCount": 99,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Helps athletes prevent and recover from injuries using advanced rehabilitation and performance programs.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "orthopedics", "name": "Orthopedics" },
+			{ "slug": "sports-medicine", "name": "Sports Medicine" }
+		]
+	},
+	{
+		"id": "dr-lucas-meyer",
+		"name": "Dr. Lucas Meyer",
+		"title": "Spine Specialist",
+		"rating": 4.7,
+		"reviewCount": 108,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-24",
+		"bio": "Focuses on minimally invasive spine procedures with personalized recovery plans for every patient.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "orthopedics", "name": "Orthopedics" },
+			{ "slug": "rehabilitation", "name": "Rehabilitation" }
+		]
+	},
+	{
+		"id": "dr-maya-desai",
+		"name": "Dr. Maya Desai",
+		"title": "Medical Oncologist",
+		"rating": 4.8,
+		"reviewCount": 133,
+		"availabilityStatus": "next_available",
+		"nextAvailableDate": "2025-05-26",
+		"bio": "Builds personalized cancer treatment plans and coordinates supportive care for patients and families.",
+		"avatarUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "oncology", "name": "Oncology" }
+		]
+	},
+	{
+		"id": "dr-daniel-ross",
+		"name": "Dr. Daniel Ross",
+		"title": "Radiation Oncologist",
+		"rating": 4.5,
+		"reviewCount": 120,
+		"availabilityStatus": "available_today",
+		"nextAvailableDate": null,
+		"bio": "Provides advanced radiation therapies with precision imaging for fewer side effects and faster recoveries.",
+		"avatarUrl": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=256&q=80",
+		"departments": [
+			{ "slug": "oncology", "name": "Oncology" },
+			{ "slug": "radiology", "name": "Radiology" }
+		]
+	}
+]

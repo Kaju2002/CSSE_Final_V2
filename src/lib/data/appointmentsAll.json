@@ -1,0 +1,46 @@
+[
+  {
+    "id": "apt-20251017-01",
+    "datetime": "2025-10-17T08:30:00.000Z",
+    "patientId": "pt-1001",
+    "patientName": "John Walker",
+    "age": 54,
+    "type": "Consult",
+    "status": "Checked In",
+    "room": "Consult 3",
+    "notes": "Routine heart failure follow-up"
+  },
+  {
+    "id": "apt-20251017-02",
+    "datetime": "2025-10-17T09:00:00.000Z",
+    "patientId": "pt-1002",
+    "patientName": "Marisol Gomez",
+    "age": 67,
+    "type": "Assessment",
+    "status": "Waiting",
+    "room": "Triage",
+    "notes": "Chest pain evaluation"
+  },
+  {
+    "id": "apt-20251018-01",
+    "datetime": "2025-10-18T11:00:00.000Z",
+    "patientId": "pt-1010",
+    "patientName": "Hannah Lee",
+    "age": 29,
+    "type": "Follow-up",
+    "status": "Scheduled",
+    "room": "Consult 2",
+    "notes": "Post-discharge check"
+  },
+  {
+    "id": "apt-20251019-01",
+    "datetime": "2025-10-19T14:00:00.000Z",
+    "patientId": "pt-1005",
+    "patientName": "Michael Zhang",
+    "age": 62,
+    "type": "Device Check",
+    "status": "Waiting",
+    "room": "Device Lab",
+    "notes": "ICD interrogation"
+  }
+]

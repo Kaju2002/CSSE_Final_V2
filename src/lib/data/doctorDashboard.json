@@ -1,0 +1,18 @@
+{
+  "doctorId": "dr-oliver-bennett",
+  "name": "Dr. Oliver Bennett",
+  "role": "Cardiology - Attending",
+  "today": {
+    "date": "2025-10-17",
+    "appointmentsCount": 8,
+    "checkedIn": 3,
+    "consults": 5
+  },
+  "weekly": {
+    "appointments": 42,
+    "avgWaitMin": 12,
+    "surgeries": 2
+  },
+  "messages": 4,
+  "pendingLabs": 6
+}

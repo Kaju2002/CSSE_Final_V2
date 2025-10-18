@@ -1,0 +1,42 @@
+/* Utility class to hide scrollbars while retaining scroll capability */
+.bio-scroll {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.bio-scroll::-webkit-scrollbar {
+	display: none;
+}
+
+.truncate-one-line {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+/* Ensure root fills viewport so layout-based scroll behaves predictably */
+html, body, #root {
+	height: 100%;
+}
+
+/* Utility class: hide scrollbar but keep scroll behavior */
+.no-scrollbar {
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE 10+ */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none; /* Chrome/Safari/Edge */
+}
+
+/* Apply hiding globally to body to remove the visible vertical scrollbar while preserving scroll */
+body {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+	display: none;
+}

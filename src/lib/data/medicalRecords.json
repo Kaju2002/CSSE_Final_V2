@@ -1,0 +1,102 @@
+{
+  "patient": {
+    "id": 1,
+    "name": "Chamodi Dilki",
+    "dob": "1990-06-15",
+    "gender": "Female",
+    "medicalRecordNumber": "MR-2024-0001",
+    "primaryCare": "Dr. Oliver Bennett",
+    "photo": ""
+  },
+  "summary": {
+    "heightCm": 165,
+    "weightKg": 68,
+    "bloodType": "O+",
+    "lastVisit": "2024-10-12T10:00:00.000Z",
+    "activeProblems": ["Type 2 Diabetes", "Hypertension"]
+  },
+  "medications": [
+    {
+      "id": "rx-001",
+      "name": "Metformin",
+      "dose": "500 mg",
+      "frequency": "Twice daily",
+      "startDate": "2023-11-01",
+      "status": "Active",
+      "prescriber": "Dr. Oliver Bennett"
+    },
+    {
+      "id": "rx-002",
+      "name": "Lisinopril",
+      "dose": "10 mg",
+      "frequency": "Once daily",
+      "startDate": "2022-05-10",
+      "status": "Active",
+      "prescriber": "Dr. Oliver Bennett"
+    }
+  ],
+  "allergies": [
+    {
+      "id": "alg-1",
+      "substance": "Penicillin",
+      "reaction": "Rash",
+      "severity": "Moderate"
+    },
+    {
+      "id": "alg-2",
+      "substance": "Peanuts",
+      "reaction": "Anaphylaxis",
+      "severity": "Severe"
+    }
+  ],
+  "labs": [
+    {
+      "id": "lab-1",
+      "test": "HbA1c",
+      "result": "7.2%",
+      "normalRange": "< 5.7%",
+      "date": "2024-10-20"
+    },
+    {
+      "id": "lab-2",
+      "test": "Cholesterol (Total)",
+      "result": "198 mg/dL",
+      "normalRange": "< 200 mg/dL",
+      "date": "2024-10-20"
+    }
+  ],
+  "immunizations": [
+    { "id": "imm-1", "vaccine": "Influenza (2024)", "date": "2024-09-01" },
+    { "id": "imm-2", "vaccine": "Tetanus (2020)", "date": "2020-03-15" }
+  ],
+  "documents": [
+    {
+      "id": "doc-1",
+      "title": "Discharge Summary - Oct 12 2024",
+      "type": "Discharge",
+      "date": "2024-10-12"
+    },
+    {
+      "id": "doc-2",
+      "title": "Chest X-Ray Report - Aug 2 2023",
+      "type": "Imaging",
+      "date": "2023-08-02"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "apt-1",
+      "date": "2024-10-12T10:00:00.000Z",
+      "doctor": "Dr. Oliver Bennett",
+      "department": "General Medicine",
+      "status": "Completed"
+    },
+    {
+      "id": "apt-2",
+      "date": "2024-11-15T14:30:00.000Z",
+      "doctor": "Dr. Emily White",
+      "department": "Endocrinology",
+      "status": "Scheduled"
+    }
+  ]
+}
