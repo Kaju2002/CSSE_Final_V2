@@ -5,6 +5,7 @@ import MobileDropdown from '../../Shared_Ui/MobileDropdown';
 import SearchBar from '../../ui/SearchBar'
 import Card from '../../ui/Card'
 import Button from '../../ui/Button'
+import { Loader2 } from 'lucide-react'
 import AppointmentWizardHeader from './AppointmentWizardHeader'
 import hospitalsJson from '../../lib/data/hospitals.json' assert { type: 'json' }
 import { useAppointmentBooking } from '../../contexts/AppointmentBookingContext'
@@ -37,6 +38,7 @@ const parseDistance = (distance: string) => {
 }
 
 const MakeAppointment: React.FC = () => {
+  const [loadingMore, setLoadingMore] = useState(false);
   const navigate = useNavigate()
   const { state: bookingState, setHospital } = useAppointmentBooking()
   const [searchTerm, setSearchTerm] = useState('')
@@ -209,10 +211,20 @@ const MakeAppointment: React.FC = () => {
           <div className="flex justify-center pt-2">
             <Button
               type="button"
-              onClick={() => setVisibleCount((count) => count + LOAD_MORE_INCREMENT)}
-              className="rounded-full bg-[#2a6bb7] px-6 py-3 text-sm font-semibold shadow-[0_12px_24px_-16px_rgba(42,107,183,0.7)] hover:bg-[#245ca0]"
+              disabled={loadingMore}
+              onClick={() => {
+                setLoadingMore(true);
+                setTimeout(() => {
+                  setVisibleCount((count) => count + LOAD_MORE_INCREMENT);
+                  setLoadingMore(false);
+                }, 900);
+              }}
+              className={`rounded-full bg-[#2a6bb7] px-6 py-3 text-sm font-semibold shadow-[0_12px_24px_-16px_rgba(42,107,183,0.7)] hover:bg-[#245ca0] flex items-center gap-2 ${loadingMore ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              Load more hospitals
+              {loadingMore ? (
+                <Loader2 className="animate-spin h-5 w-5 mr-2" />
+              ) : null}
+              {loadingMore ? 'Loading...' : 'Load more hospitals'}
             </Button>
           </div>
         )}
