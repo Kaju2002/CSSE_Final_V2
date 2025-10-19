@@ -3,7 +3,11 @@ import { Bell, CalendarCheck, LogIn, LogOut, Menu, Search, User, UserRound } fro
 import { Link, useNavigate } from 'react-router-dom'
 import NotificationSheet from './NotificationSheet'
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  role?: 'doctor' | 'patient';
+}
+
+const Navbar: React.FC<NavbarProps> = ({ role = 'patient' }) => {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationSheetOpen, setNotificationSheetOpen] = useState(false)
@@ -74,8 +78,17 @@ const Navbar: React.FC = () => {
                 <UserRound className="h-5 w-5 text-[#2a6bb7]" strokeWidth={1.8} />
               </span>
               <div className="hidden text-sm leading-tight md:block">
-                <p className="font-semibold">Chamodi Dilki</p>
-                <p className="text-xs text-[#6f7d95]">Patient ID 10234</p>
+                {role === 'doctor' ? (
+                  <>
+                    <p className="font-semibold">Dr. John Doe</p>
+                    <p className="text-xs text-[#6f7d95]">Doctor ID 20012</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-semibold">Chamodi Dilki</p>
+                    <p className="text-xs text-[#6f7d95]">Patient ID 10234</p>
+                  </>
+                )}
               </div>
             </button>
             {menuOpen && (
@@ -90,14 +103,29 @@ const Navbar: React.FC = () => {
                   </div>
                 </div>
                 <nav className="flex flex-col py-1 text-sm text-[#1f2a44]">
-                  <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
-                    <User className="h-4 w-4" strokeWidth={1.8} />
-                    Profile
-                  </Link>
-                  <Link to="/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
-                    <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
-                    My Bookings
-                  </Link>
+                  {role === 'doctor' ? (
+                    <>
+                      <Link to="/doctor/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
+                        <User className="h-4 w-4" strokeWidth={1.8} />
+                        Profile
+                      </Link>
+                      <Link to="/doctor/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
+                        <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
+                        My Appointments
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
+                        <User className="h-4 w-4" strokeWidth={1.8} />
+                        Profile
+                      </Link>
+                      <Link to="/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
+                        <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
+                        My Bookings
+                      </Link>
+                    </>
+                  )}
                   <Link to="/login" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#f0f6ff] hover:text-[#2a6bb7]">
                     <LogIn className="h-4 w-4" strokeWidth={1.8} />
                     Login
@@ -120,14 +148,29 @@ const Navbar: React.FC = () => {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-[#e1eaf5] shadow-lg z-40">
           <nav className="flex flex-col py-2 text-sm text-[#1f2a44]">
-            <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
-              <User className="h-4 w-4" strokeWidth={1.8} />
-              Profile
-            </Link>
-            <Link to="/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
-              <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
-              My Bookings
-            </Link>
+            {role === 'doctor' ? (
+              <>
+                <Link to="/doctor/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
+                  <User className="h-4 w-4" strokeWidth={1.8} />
+                  Profile
+                </Link>
+                <Link to="/doctor/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
+                  <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
+                  My Appointments
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
+                  <User className="h-4 w-4" strokeWidth={1.8} />
+                  Profile
+                </Link>
+                <Link to="/appointments" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
+                  <CalendarCheck className="h-4 w-4" strokeWidth={1.8} />
+                  My Bookings
+                </Link>
+              </>
+            )}
             <Link to="/login" className="flex items-center gap-2 px-4 py-2.5 transition hover:bg-[#eef4ff] hover:text-[#2a6bb7]">
               <LogIn className="h-4 w-4" strokeWidth={1.8} />
               Login
