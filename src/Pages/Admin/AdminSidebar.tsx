@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 
 const adminLinks = [
   {
@@ -73,23 +73,6 @@ const adminLinks = [
     ),
   },
   {
-    label: "Reports",
-    to: "/admin/reports",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        className="h-5 w-5"
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <path d="M8 7h8M8 11h8M8 15h6" />
-      </svg>
-    ),
-  },
-  {
     label: "Settings",
     to: "/admin/settings",
     icon: (
@@ -127,16 +110,113 @@ const adminLinks = [
   },
 ];
 
+const reportsSubMenu = [
+  {
+    label: "Hospital",
+    to: "/admin/reports/hospital",
+  },
+  {
+    label: "Patients",
+    to: "/admin/reports/patients",
+  },
+];
+
 const AdminSidebar: React.FC = () => {
+  const location = useLocation();
+  const isReportsActive = location.pathname.startsWith("/admin/reports");
+  const [isReportsOpen, setIsReportsOpen] = useState(isReportsActive);
+
+  React.useEffect(() => {
+    if (isReportsActive) {
+      setIsReportsOpen(true);
+    }
+  }, [isReportsActive]);
+
   return (
     <aside className="hidden lg:flex flex-col w-64 min-h-screen overflow-y-auto border-r border-[#e1eaf5] bg-white px-5 py-6 text-[#1b2b4b] no-scrollbar">
       <nav className="flex-1 space-y-8">
         <div className="space-y-2">
-          {adminLinks.map((item) => (
+          {adminLinks.slice(0, 4).map((item) => (
             <NavLink
               key={item.label}
               to={item.to}
-              end={item.end}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
+                  isActive
+                    ? "bg-[#eef4ff] text-[#2a6bb7]"
+                    : "hover:bg-[#f0f6ff] hover:text-[#2a6bb7]"
+                }`
+              }
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+
+          {/* Reports Section with Collapsible Sub-menu */}
+          <div>
+            <button
+              onClick={() => setIsReportsOpen(!isReportsOpen)}
+              className={`flex items-center justify-between w-full gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
+                isReportsActive
+                  ? "bg-[#eef4ff] text-[#2a6bb7]"
+                  : "hover:bg-[#f0f6ff] hover:text-[#2a6bb7]"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  className="h-5 w-5"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M8 7h8M8 11h8M8 15h6" />
+                </svg>
+                <span>Reports</span>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className={`h-4 w-4 transition-transform ${
+                  isReportsOpen ? "rotate-180" : ""
+                }`}
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+
+            {/* Sub-menu */}
+            {isReportsOpen && (
+              <div className="ml-8 mt-1 space-y-1">
+                {reportsSubMenu.map((subItem) => (
+                  <NavLink
+                    key={subItem.label}
+                    to={subItem.to}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-2xl px-4 py-2 text-sm font-medium transition ${
+                        isActive
+                          ? "bg-[#eef4ff] text-[#2a6bb7]"
+                          : "hover:bg-[#f0f6ff] hover:text-[#2a6bb7]"
+                      }`
+                    }
+                  >
+                    <span>{subItem.label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {adminLinks.slice(4).map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.to}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
                   isActive
