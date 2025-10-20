@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import "./App.css";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
@@ -25,6 +25,7 @@ import DoctorMessages from "./Pages/Doctor/DoctorMessages";
 import DoctorSettings from "./Pages/Doctor/DoctorSettings";
 import HospitalStats from "./Pages/Admin/HospitalStats";
 import Reports from "./Pages/Admin/Reports";
+import PatientReports from "./Pages/Admin/PatientReports";
 import Settings from "./Pages/Admin/Settings";
 import AppointmentWizard from "./Pages/AppoinmentManagement/AppointmentWizard";
 import Step1PersonalInfo from "./Pages/Registration/Step1PersonalInfo";
@@ -116,7 +117,9 @@ function App() {
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/staff-management" element={<StaffManagement />} />
           <Route path="/admin/hospital-stats" element={<HospitalStats />} />
-          <Route path="/admin/reports" element={<Reports />} />
+          <Route path="/admin/reports" element={<Navigate to="/admin/reports/hospital" replace />} />
+          <Route path="/admin/reports/hospital" element={<Reports />} />
+          <Route path="/admin/reports/patients" element={<PatientReports />} />
           <Route path="/admin/settings" element={<Settings />} />
           <Route element={<Home />}>
             <Route index element={<Dashboard />} />

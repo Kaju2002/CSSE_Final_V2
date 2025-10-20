@@ -2,6 +2,7 @@
   {
     "id": "pt-1001",
     "name": "John Walker",
+    "email": "john.walker@email.com",
     "dob": "1971-04-12",
     "age": 54,
     "lastVisit": "2025-10-15",
@@ -12,6 +13,7 @@
   {
     "id": "pt-1002",
     "name": "Marisol Gomez",
+    "email": "marisol.gomez@email.com",
     "dob": "1958-09-02",
     "age": 67,
     "lastVisit": "2025-09-22",
@@ -22,6 +24,7 @@
   {
     "id": "pt-1003",
     "name": "Ethan Clark",
+    "email": "ethan.clark@email.com",
     "dob": "1986-06-08",
     "age": 39,
     "lastVisit": "2025-08-30",
@@ -32,11 +35,23 @@
   {
     "id": "pt-1004",
     "name": "Sana Rahman",
+    "email": "sana.rahman@email.com",
     "dob": "1980-02-21",
     "age": 45,
     "lastVisit": "2025-10-10",
     "primaryProblem": "Post-op care",
     "contact": "(555) 707-8080",
     "mrn": "MR-2025-1004"
+  },
+  {
+    "id": "pt-1005",
+    "name": "Michael Zhang",
+    "email": "michael.zhang@email.com",
+    "dob": "1990-03-15",
+    "age": 35,
+    "lastVisit": "2025-10-16",
+    "primaryProblem": "Kidney Function Monitoring",
+    "contact": "(555) 909-1010",
+    "mrn": "MR-2025-1005"
   }
 ]
