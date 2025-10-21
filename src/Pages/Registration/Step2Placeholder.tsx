@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { saveDocument } from './Services/registrationService'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -7,6 +8,20 @@ const Step2Placeholder: React.FC = () => {
   const navigate = useNavigate()
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [idType, setIdType] = useState('Driver License')
+  const [idNumber, setIdNumber] = useState('')
+  const [documentUrl, setDocumentUrl] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    try {
+      const reg = JSON.parse(localStorage.getItem('registration') || '{}')
+      if (reg?.document?.url) setDocumentUrl(reg.document.url)
+      if (reg?.idNumber) setIdNumber(reg.idNumber)
+    } catch {
+      // ignore
+    }
+  }, [])
 
   const onFile = useCallback((f: File) => {
     setError(null)
@@ -61,7 +76,7 @@ const Step2Placeholder: React.FC = () => {
           <div className="text-xs text-gray-500 mt-2">Step 2 of 6: Document Upload</div>
         </div>
 
-        <div className="bg-[#d7e8e7] p-6 rounded-lg shadow-sm">
+        <div className="bg-[#dbeeff] p-6 rounded-lg shadow-sm">
 
           <h3 className="text-xl font-semibold mb-2">Document Upload</h3>
           <p className="text-sm text-gray-700 mb-4">Please upload your identification document to proceed with the registration.</p>
@@ -69,7 +84,7 @@ const Step2Placeholder: React.FC = () => {
           <div
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
-            className="border-2 border-dashed border-white p-8 rounded-lg text-center bg-[#e6f0ef] mb-4"
+            className="border-2 border-dashed border-white p-8 rounded-lg text-center bg-[#e6f0ff] mb-4"
           >
             <div className="text-4xl mb-3">⬆️</div>
             <div className="text-lg font-medium">Drag &amp; drop your document here</div>
@@ -80,13 +95,32 @@ const Step2Placeholder: React.FC = () => {
             </div>
           </div>
 
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">ID Type</label>
+            <select value={idType} onChange={(e) => setIdType(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2">
+              <option>Driver License</option>
+              <option>Passport</option>
+              <option>National ID</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
+            <input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Document URL</label>
+            <input value={documentUrl} onChange={(e) => setDocumentUrl(e.target.value)} placeholder="https://..." className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
+          </div>
+
           {file ? (
             <div className="p-3 bg-white rounded mb-4">
               <div className="font-medium">Selected file</div>
               <div className="text-sm text-gray-600">{file.name} — {(file.size / 1024).toFixed(1)} KB</div>
             </div>
           ) : (
-            <div className="text-sm text-gray-600 mb-4">Valid NIC/Passport required for verification (PDF, JPG, PNG up to 5MB).</div>
+            <div className="text-sm text-gray-600 mb-4">Valid ID required for verification (PDF, JPG, PNG up to 5MB).</div>
           )}
 
           {error && <div className="text-sm text-red-600 mb-4">{error}</div>}
@@ -94,10 +128,28 @@ const Step2Placeholder: React.FC = () => {
           <div className="flex justify-between">
             <button onClick={() => navigate('/register')} className="px-4 py-2 border rounded">Back</button>
             <button
-              onClick={() => navigate('/register/step-3')}
-              className={`px-4 py-2 rounded bg-[#2a6bb7] text-white ${!file ? 'opacity-50 pointer-events-none' : ''}`}
-            >
-              Next
+              onClick={async () => {
+                setError(null)
+                try {
+                  setLoading(true)
+                  const reg = JSON.parse(localStorage.getItem('registration') || '{}')
+                  const registrationId = reg?.registrationId
+                  if (!registrationId) throw new Error('Missing registrationId')
+                  if (!documentUrl) throw new Error('Please provide a document URL')
+                  await saveDocument({ registrationId, idType, idNumber, documentUrl })
+                  reg.document = { url: documentUrl, name: file?.name }
+                  reg.idNumber = idNumber
+                  localStorage.setItem('registration', JSON.stringify(reg))
+                  navigate('/register/step-3')
+                } catch (err: unknown) {
+                  const msg = err instanceof Error ? err.message : String(err || 'Failed to save document')
+                  setError(msg)
+                } finally {
+                  setLoading(false)
+                }
+              }}
+              className={`px-4 py-2 rounded bg-[#2a6bb7] text-white ${!documentUrl ? 'opacity-50 pointer-events-none' : ''}`}>
+              {loading ? 'Saving...' : 'Next'}
             </button>
           </div>
         </div>
