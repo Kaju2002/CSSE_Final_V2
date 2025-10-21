@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Input from '../../Shared_Ui/Input'
+import { saveMedicalInfo } from './Services/registrationService'
 
 const Step3MedicalInfo: React.FC = () => {
   const navigate = useNavigate()
@@ -11,20 +12,55 @@ const Step3MedicalInfo: React.FC = () => {
   const [otherCondition, setOtherCondition] = useState('')
   const [emergencyName, setEmergencyName] = useState('')
   const [emergencyPhone, setEmergencyPhone] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const toggleCondition = (val: string) => {
     setConditions((prev) => (prev.includes(val) ? prev.filter((p) => p !== val) : [...prev, val]))
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     try {
+      setLoading(true)
+      setError('')
+
       const reg = JSON.parse(localStorage.getItem('registration') || '{}')
-      reg.medical = { ageRange, gender, conditions: [...conditions, otherCondition ? otherCondition : undefined].filter(Boolean), emergencyName, emergencyPhone }
+      const registrationId = reg?.registrationId
+
+      if (!registrationId) {
+        throw new Error('Missing registration ID. Please start from Step 1.')
+      }
+
+      const allConditions = [...conditions, otherCondition ? otherCondition : undefined].filter(Boolean) as string[]
+
+      // Save medical info to API
+      await saveMedicalInfo({
+        registrationId,
+        conditions: allConditions,
+        ageRange,
+        emergencyContact: emergencyName && emergencyPhone ? {
+          name: emergencyName,
+          phone: emergencyPhone,
+        } : undefined,
+      })
+
+      // Update localStorage
+      reg.medical = { 
+        ageRange, 
+        gender, 
+        conditions: allConditions, 
+        emergencyName, 
+        emergencyPhone 
+      }
       localStorage.setItem('registration', JSON.stringify(reg))
-    } catch {
-      // ignore
+
+      navigate('/register/step-4')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(message || 'Failed to save medical information')
+    } finally {
+      setLoading(false)
     }
-    navigate('/register/step-4')
   }
 
   return (
@@ -33,9 +69,9 @@ const Step3MedicalInfo: React.FC = () => {
         <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
           <div className="text-sm text-gray-600">Registration Progress</div>
           <div className="mt-2 bg-gray-100 rounded h-3 overflow-hidden">
-            <div className="h-3 bg-[#2a6bb7]" style={{ width: '50%' }} />
+            <div className="h-3 bg-[#2a6bb7]" style={{ width: '60%' }} />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Step 3 of 6: Medical & Demographics</div>
+          <div className="text-xs text-gray-500 mt-2">Step 3 of 5: Medical & Demographics</div>
         </div>
 
         <div className="w-full bg-white rounded-lg p-6 shadow">
@@ -101,9 +137,17 @@ const Step3MedicalInfo: React.FC = () => {
             </div>
           </div>
 
+          {error && <div className="text-sm text-red-600 mb-4">{error}</div>}
+
           <div className="flex justify-between mt-6">
-            <button onClick={() => navigate('/register/step-2')} className="px-4 py-2 border rounded">Back</button>
-            <button onClick={handleNext} className="px-4 py-2 rounded bg-[#2a6bb7] text-white">Next</button>
+            <button onClick={() => navigate('/register/step-2')} disabled={loading} className="px-4 py-2 border rounded">Back</button>
+            <button 
+              onClick={handleNext} 
+              disabled={loading}
+              className={`px-4 py-2 rounded ${loading ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#2a6bb7] text-white'}`}
+            >
+              {loading ? 'Saving...' : 'Next'}
+            </button>
           </div>
         </div>
       </div>

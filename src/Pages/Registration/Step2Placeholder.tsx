@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { saveDocument } from './Services/registrationService'
+import { uploadDocument } from './Services/registrationService'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -10,14 +10,19 @@ const Step2Placeholder: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [idType, setIdType] = useState('Driver License')
   const [idNumber, setIdNumber] = useState('')
-  const [documentUrl, setDocumentUrl] = useState('')
   const [loading, setLoading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadStep, setUploadStep] = useState('')
 
   useEffect(() => {
     try {
       const reg = JSON.parse(localStorage.getItem('registration') || '{}')
-      if (reg?.document?.url) setDocumentUrl(reg.document.url)
+      if (reg?.idType) setIdType(reg.idType)
       if (reg?.idNumber) setIdNumber(reg.idNumber)
+      if (reg?.document?.name) {
+        // Show previously uploaded file info (visual only)
+        setError(null)
+      }
     } catch {
       // ignore
     }
@@ -71,9 +76,9 @@ const Step2Placeholder: React.FC = () => {
         <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
           <div className="text-sm text-gray-600">Registration Progress</div>
           <div className="mt-2 bg-gray-100 rounded h-3 overflow-hidden">
-            <div className="h-3 bg-[#2a6bb7] w-2/6" />
+            <div className="h-3 bg-[#2a6bb7]" style={{ width: '40%' }} />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Step 2 of 6: Document Upload</div>
+          <div className="text-xs text-gray-500 mt-2">Step 2 of 5: Document Upload</div>
         </div>
 
         <div className="bg-[#dbeeff] p-6 rounded-lg shadow-sm">
@@ -106,18 +111,31 @@ const Step2Placeholder: React.FC = () => {
 
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
-            <input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Document URL</label>
-            <input value={documentUrl} onChange={(e) => setDocumentUrl(e.target.value)} placeholder="https://..." className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2" />
+            <input 
+              value={idNumber} 
+              onChange={(e) => setIdNumber(e.target.value)} 
+              placeholder="e.g., DL123456789"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" 
+            />
           </div>
 
           {file ? (
-            <div className="p-3 bg-white rounded mb-4">
-              <div className="font-medium">Selected file</div>
-              <div className="text-sm text-gray-600">{file.name} — {(file.size / 1024).toFixed(1)} KB</div>
+            <div className="p-3 bg-white rounded mb-4 border border-green-200">
+              <div className="font-medium text-green-700">✓ File selected and ready to upload</div>
+              <div className="text-sm text-gray-600 mt-1">{file.name} — {(file.size / 1024).toFixed(1)} KB</div>
+              {loading && uploadProgress > 0 && (
+                <div className="mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-[#2a6bb7] h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {uploadStep || `Uploading... ${uploadProgress}%`}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-sm text-gray-600 mb-4">Valid ID required for verification (PDF, JPG, PNG up to 5MB).</div>
@@ -126,30 +144,86 @@ const Step2Placeholder: React.FC = () => {
           {error && <div className="text-sm text-red-600 mb-4">{error}</div>}
 
           <div className="flex justify-between">
-            <button onClick={() => navigate('/register')} className="px-4 py-2 border rounded">Back</button>
+            <button 
+              onClick={() => navigate('/register')} 
+              disabled={loading}
+              className="px-4 py-2 border rounded disabled:opacity-50"
+            >
+              Back
+            </button>
             <button
               onClick={async () => {
                 setError(null)
+                setUploadProgress(0)
+                setUploadStep('')
+                
                 try {
                   setLoading(true)
+                  
                   const reg = JSON.parse(localStorage.getItem('registration') || '{}')
                   const registrationId = reg?.registrationId
-                  if (!registrationId) throw new Error('Missing registrationId')
-                  if (!documentUrl) throw new Error('Please provide a document URL')
-                  await saveDocument({ registrationId, idType, idNumber, documentUrl })
-                  reg.document = { url: documentUrl, name: file?.name }
+                  
+                  if (!registrationId) {
+                    throw new Error('Missing registration ID. Please start from Step 1.')
+                  }
+                  if (!file) {
+                    throw new Error('Please select a document file to upload')
+                  }
+                  if (!idNumber.trim()) {
+                    throw new Error('Please enter your ID number')
+                  }
+                  
+                  // Step 1: Get patient ID
+                  setUploadProgress(10)
+                  setUploadStep('Step 1/3: Retrieving patient information...')
+                  
+                  await new Promise(resolve => setTimeout(resolve, 200)) // Visual delay
+                  
+                  setUploadProgress(30)
+                  
+                  // Step 2: Upload to Cloudinary (via /api/imaging)
+                  setUploadStep('Step 2/3: Uploading file to cloud storage...')
+                  
+                  await new Promise(resolve => setTimeout(resolve, 200)) // Visual delay
+                  
+                  setUploadProgress(60)
+                  
+                  // Step 3: Save to registration (via /api/registration/document)
+                  setUploadStep('Step 3/3: Saving document information...')
+                  
+                  const result = await uploadDocument(registrationId, file, idType, idNumber)
+                  
+                  setUploadProgress(100)
+                  setUploadStep('Upload complete!')
+                  
+                  // Update localStorage with document info
+                  reg.document = { 
+                    url: result.documentUrl, 
+                    name: file.name,
+                    type: file.type,
+                    size: file.size
+                  }
+                  reg.idType = idType
                   reg.idNumber = idNumber
                   localStorage.setItem('registration', JSON.stringify(reg))
+                  
+                  // Small delay to show 100% progress
+                  await new Promise(resolve => setTimeout(resolve, 500))
+                  
                   navigate('/register/step-3')
                 } catch (err: unknown) {
-                  const msg = err instanceof Error ? err.message : String(err || 'Failed to save document')
+                  const msg = err instanceof Error ? err.message : String(err || 'Failed to upload document')
                   setError(msg)
+                  setUploadProgress(0)
+                  setUploadStep('')
                 } finally {
                   setLoading(false)
                 }
               }}
-              className={`px-4 py-2 rounded bg-[#2a6bb7] text-white ${!documentUrl ? 'opacity-50 pointer-events-none' : ''}`}>
-              {loading ? 'Saving...' : 'Next'}
+              disabled={!file || !idNumber.trim() || loading}
+              className={`px-4 py-2 rounded ${!file || !idNumber.trim() || loading ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#2a6bb7] text-white hover:bg-[#235a94]'}`}
+            >
+              {loading ? 'Uploading...' : 'Upload & Continue'}
             </button>
           </div>
         </div>

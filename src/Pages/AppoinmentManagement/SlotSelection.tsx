@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../ui/Button'
 import AppointmentWizardHeader from './AppointmentWizardHeader'
-import { getDoctorsByDepartment, type Doctor } from '../../lib/utils/doctors'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useAppointmentBooking } from '../../contexts/AppointmentBookingContext'
+import { fetchSlots, type ApiSlot } from '../../lib/utils/appointmentApi'
 
 type SlotKey = {
 	dayIndex: number
@@ -12,6 +12,7 @@ type SlotKey = {
 }
 
 type GeneratedSlot = SlotKey & {
+	id?: string
 	isAvailable: boolean
 }
 
@@ -25,6 +26,14 @@ const toTimeLabel = (totalMinutes: number): string => {
 	const suffix = hours24 >= 12 ? 'PM' : 'AM'
 	const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12
 	return `${hours12}:${minutes.toString().padStart(2, '0')} ${suffix}`
+}
+
+// Format date to YYYY-MM-DD for API
+const formatDateForApi = (date: Date): string => {
+	const year = date.getFullYear()
+	const month = String(date.getMonth() + 1).padStart(2, '0')
+	const day = String(date.getDate()).padStart(2, '0')
+	return `${year}-${month}-${day}`
 }
 
 const getWeekStart = (date: Date): Date => {
@@ -42,16 +51,6 @@ const buildTimeLabels = (): string[] => {
 		labels.push(toTimeLabel(minutes))
 	}
 	return labels
-}
-
-const generateSlots = (timeLabels: string[], weekDays: Date[]): GeneratedSlot[][] => {
-	return weekDays.map((_, dayIndex) =>
-		timeLabels.map((timeLabel, slotIndex) => ({
-			dayIndex,
-			timeLabel,
-			isAvailable: ((dayIndex + 3) * (slotIndex + 5)) % 5 !== 0
-		}))
-	)
 }
 
 const formatSlugToTitle = (value: string | undefined): string => {
@@ -81,20 +80,16 @@ const SlotSelection: React.FC = () => {
 
 	const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => deriveInitialWeekStart())
 	const [activeDayIndex, setActiveDayIndex] = useState<number>(() => bookingState.slot?.dayIndex ?? 0)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState<string | null>(null)
+	const [slotsByDate, setSlotsByDate] = useState<Map<string, ApiSlot[]>>(new Map())
 
 	useEffect(() => {
 		if (!bookingState.doctor || !departmentSlug) {
 			navigate(-1)
 			return
 		}
-
-		const doctors = getDoctorsByDepartment(departmentSlug)
-		const doctorExists = doctors.some((doctor) => doctor.id === bookingState.doctor?.id)
-		if (!doctorExists) {
-			setDoctor(null)
-			navigate(-1)
-		}
-	}, [bookingState.doctor, departmentSlug, navigate, setDoctor])
+	}, [bookingState.doctor, departmentSlug, navigate])
 
 	const weekDays = useMemo(() => {
 		return Array.from({ length: 7 }).map((_, index) => {
@@ -104,9 +99,56 @@ const SlotSelection: React.FC = () => {
 		})
 	}, [currentWeekStart])
 
-	const timeLabels = useMemo(() => buildTimeLabels(), [])
-	const slotMatrix = useMemo(() => generateSlots(timeLabels, weekDays), [timeLabels, weekDays])
-	const activeSlots = slotMatrix[activeDayIndex] ?? []
+	// Fetch slots for the active day
+	useEffect(() => {
+		if (!bookingState.doctor?.id) {
+			return
+		}
+
+		const activeDate = weekDays[activeDayIndex]
+		const dateKey = formatDateForApi(activeDate)
+
+		// Skip if already loaded
+		if (slotsByDate.has(dateKey)) {
+			return
+		}
+
+		const loadSlots = async () => {
+			try {
+				setLoading(true)
+				setError(null)
+
+				const response = await fetchSlots(bookingState.doctor!.id, dateKey)
+				
+				if (response.success) {
+					setSlotsByDate(prev => new Map(prev).set(dateKey, response.data.slots))
+				} else {
+					setError('Failed to load available slots')
+				}
+			} catch (err) {
+				console.error('Error fetching slots:', err)
+				setError('Failed to load slots. Please try again.')
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		loadSlots()
+	}, [bookingState.doctor?.id, activeDayIndex, weekDays, slotsByDate])
+
+	const activeSlots = useMemo((): GeneratedSlot[] => {
+		const activeDate = weekDays[activeDayIndex]
+		const dateKey = formatDateForApi(activeDate)
+		const apiSlots = slotsByDate.get(dateKey) || []
+
+		// Convert API slots to GeneratedSlot format
+		return apiSlots.map(slot => ({
+			id: slot._id,
+			dayIndex: activeDayIndex,
+			timeLabel: slot.timeLabel,
+			isAvailable: slot.isAvailable
+		}))
+	}, [activeDayIndex, weekDays, slotsByDate])
 
 	useEffect(() => {
 		if (!bookingState.slot) {
@@ -123,16 +165,10 @@ const SlotSelection: React.FC = () => {
 		setActiveDayIndex(bookingState.slot.dayIndex)
 	}, [bookingState.slot])
 
-	const selectedDoctor: Doctor | null = useMemo(() => {
-		if (!departmentSlug || !bookingState.doctor?.id) {
-			return null
-		}
-		const doctors = getDoctorsByDepartment(departmentSlug)
-		return doctors.find((doctor) => doctor.id === bookingState.doctor?.id) ?? null
-	}, [bookingState.doctor?.id, departmentSlug])
-
 	const hospitalName = bookingState.hospital?.name ?? 'the selected hospital'
 	const departmentName = bookingState.department?.name ?? formatSlugToTitle(departmentSlug)
+	const doctorName = bookingState.doctor?.name ?? 'your doctor'
+	const doctorAvatar = bookingState.doctor?.profileImage
 
 	const selectedSlot = bookingState.slot
 	const selectedSlotKey: SlotKey | null = selectedSlot
@@ -178,9 +214,11 @@ const SlotSelection: React.FC = () => {
 		selectedDate.setHours(0, 0, 0, 0)
 
 		setSlot({
+			id: slot.id,
 			dayIndex: slot.dayIndex,
 			timeLabel: slot.timeLabel,
-			date: selectedDate.toISOString()
+			date: selectedDate.toISOString(),
+			isAvailable: slot.isAvailable
 		})
 		setActiveDayIndex(slot.dayIndex)
 	}
@@ -214,15 +252,15 @@ const SlotSelection: React.FC = () => {
 				{/* Doctor summary (avatar, title, breadcrumbs) */}
 				<div className="flex items-start gap-4 px-6">
 					<div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-2xl bg-[#eaf1ff]">
-						{selectedDoctor?.avatarUrl ? (
-							<img src={selectedDoctor.avatarUrl} alt={selectedDoctor.name} className="h-full w-full object-cover" />
+						{doctorAvatar ? (
+							<img src={doctorAvatar} alt={doctorName} className="h-full w-full object-cover" />
 						) : (
 							<div className="flex h-full w-full items-center justify-center text-lg font-semibold text-[#2a6bb7]">
-								{selectedDoctor?.name
-									?.split(' ')
+								{doctorName
+									.split(' ')
 									.map((segment) => segment.charAt(0))
 									.slice(0, 2)
-									.join('') ?? 'DR'}
+									.join('') || 'DR'}
 							</div>
 						)}
 					</div>
@@ -231,7 +269,7 @@ const SlotSelection: React.FC = () => {
 						<h1 className="text-2xl font-semibold text-[#1b2b4b]">Select Appointment Slot</h1>
 						<p className="text-sm text-[#6f7d95]">
 							Schedule a visit with{' '}
-							<span className="font-semibold text-[#2a6bb7]">{selectedDoctor ? selectedDoctor.name : 'your doctor'}</span>{' '}
+							<span className="font-semibold text-[#2a6bb7]">{doctorName}</span>{' '}
 							for the {departmentName} department at{' '}
 							<span className="font-semibold text-[#2a6bb7]">{hospitalName}</span>.
 						</p>
@@ -313,7 +351,22 @@ const SlotSelection: React.FC = () => {
 					})}
 				</div>
 
-				<DaySlotColumns slots={activeSlots} selectedSlot={selectedSlotKey} onSlotSelect={handleSlotSelect} />
+				{loading && (
+					<div className="flex justify-center items-center py-10">
+						<Loader2 className="animate-spin h-8 w-8 text-[#2a6bb7]" />
+						<span className="ml-3 text-sm text-[#6f7d95]">Loading available slots...</span>
+					</div>
+				)}
+
+				{error && !loading && (
+					<div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-600">
+						{error}
+					</div>
+				)}
+
+				{!loading && !error && (
+					<DaySlotColumns slots={activeSlots} selectedSlot={selectedSlotKey} onSlotSelect={handleSlotSelect} />
+				)}
 			</section>
 
 			<div className="flex justify-between border-t border-[#e0e8fb] bg-white/90 px-6 py-4 backdrop-blur">

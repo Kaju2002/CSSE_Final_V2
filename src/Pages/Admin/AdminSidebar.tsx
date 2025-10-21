@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../../lib/utils/auth";
 
 const adminLinks = [
   {
@@ -55,6 +56,80 @@ const adminLinks = [
     ),
   },
   {
+    label: "Doctor Management",
+    to: "/admin/doctor-management",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-5 w-5"
+      >
+        <path d="M12 2L12 8" />
+        <path d="M8 5L16 5" />
+        <circle cx="12" cy="12" r="4" />
+        <path d="M5.5 21a7.5 7.5 0 0 1 13 0" />
+      </svg>
+    ),
+  },
+  {
+    label: "Hospital Management",
+    to: "/admin/hospital-management",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-5 w-5"
+      >
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <path d="M12 8v8" />
+        <path d="M8 12h8" />
+      </svg>
+    ),
+  },
+  {
+    label: "Department Management",
+    to: "/admin/department-management",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-5 w-5"
+      >
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+        <path d="M9 22V12h6v10" />
+      </svg>
+    ),
+  },
+  {
+    label: "Services Management",
+    to: "/admin/services-management",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-5 w-5"
+      >
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <path d="M14 2v6h6" />
+        <path d="M16 13H8" />
+        <path d="M16 17H8" />
+        <path d="M10 9H8" />
+      </svg>
+    ),
+  },
+  {
     label: "Hospital Stats",
     to: "/admin/hospital-stats",
     icon: (
@@ -69,6 +144,25 @@ const adminLinks = [
         <rect x="3" y="3" width="18" height="18" rx="2" />
         <path d="M9 17v-6" />
         <path d="M15 17V7" />
+      </svg>
+    ),
+  },
+  {
+    label: "Staff Scheduling",
+    to: "/admin/staff-scheduling",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        className="h-5 w-5"
+      >
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <path d="M16 2v4" />
+        <path d="M8 2v4" />
+        <path d="M3 10h18" />
       </svg>
     ),
   },
@@ -123,8 +217,20 @@ const reportsSubMenu = [
 
 const AdminSidebar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isReportsActive = location.pathname.startsWith("/admin/reports");
   const [isReportsOpen, setIsReportsOpen] = useState(isReportsActive);
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/login');
+    }
+  };
 
   React.useEffect(() => {
     if (isReportsActive) {
@@ -136,7 +242,7 @@ const AdminSidebar: React.FC = () => {
     <aside className="hidden lg:flex flex-col w-64 min-h-screen overflow-y-auto border-r border-[#e1eaf5] bg-white px-5 py-6 text-[#1b2b4b] no-scrollbar">
       <nav className="flex-1 space-y-8">
         <div className="space-y-2">
-          {adminLinks.slice(0, 4).map((item) => (
+          {adminLinks.slice(0, 9).map((item) => (
             <NavLink
               key={item.label}
               to={item.to}
@@ -213,26 +319,33 @@ const AdminSidebar: React.FC = () => {
             )}
           </div>
 
-          {adminLinks.slice(4).map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-[#eef4ff] text-[#2a6bb7]"
-                    : "hover:bg-[#f0f6ff] hover:text-[#2a6bb7]"
-                }${
-                  item.highlight
-                    ? " text-[#c0392b] hover:bg-[#f9e9e9] hover:text-[#c0392b]"
-                    : ""
-                }`
-              }
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
+          {adminLinks.slice(9).map((item) => 
+            item.label === "Logout" ? (
+              <button
+                key={item.label}
+                onClick={handleLogout}
+                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition w-full text-left text-[#c0392b] hover:bg-[#f9e9e9] hover:text-[#c0392b]"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            ) : (
+              <NavLink
+                key={item.label}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-[#eef4ff] text-[#2a6bb7]"
+                      : "hover:bg-[#f0f6ff] hover:text-[#2a6bb7]"
+                  }`
+                }
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </NavLink>
+            )
+          )}
         </div>
       </nav>
     </aside>

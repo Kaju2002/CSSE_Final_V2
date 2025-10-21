@@ -29,9 +29,10 @@ const Step1PersonalInfo: React.FC = () => {
         setLoading(true)
         setError('')
 
+        // Step 1: Start registration wizard
         const registrationId = await startRegistration()
 
-        // call API to save personal info
+        // Step 2: Save personal info
         await savePersonalInfo({
           registrationId,
           firstName,
@@ -42,9 +43,8 @@ const Step1PersonalInfo: React.FC = () => {
           address
         })
 
-        const registration = JSON.parse(localStorage.getItem('registration') || '{}')
+        // Save to localStorage
         localStorage.setItem('registration', JSON.stringify({
-          ...registration,
           registrationId,
           firstName,
           lastName,
@@ -72,9 +72,9 @@ const Step1PersonalInfo: React.FC = () => {
         <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
           <div className="text-sm text-gray-600">Registration Progress</div>
           <div className="mt-2 bg-gray-100 rounded h-3 overflow-hidden">
-            <div className="h-3 bg-[#2a6bb7] w-1/6" />
+            <div className="h-3 bg-[#2a6bb7]" style={{ width: '20%' }} />
           </div>
-          <div className="text-xs text-gray-500 mt-2">Step 1 of 6: Personal Information</div>
+          <div className="text-xs text-gray-500 mt-2">Step 1 of 5: Personal Information</div>
         </div>
 
         <div className="bg-white rounded-lg p-6 sm:p-8 shadow-sm flex flex-col lg:flex-row gap-6 lg:gap-8">
@@ -86,6 +86,7 @@ const Step1PersonalInfo: React.FC = () => {
               <Input label="First Name" placeholder="Enter your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
               <Input label="Last Name" placeholder="Enter your last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
             </div>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <Input label="Contact Number" placeholder="e.g., +1 (555) 123-4567" value={contact} onChange={(e) => setContact(e.target.value)} />
             </div>
@@ -115,8 +116,12 @@ const Step1PersonalInfo: React.FC = () => {
               {error && <div className="text-sm text-red-600">{error}</div>}
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                 <button onClick={handleBack} className="px-4 py-2 border rounded w-full sm:w-auto">Back</button>
-                <button onClick={handleNext} disabled={!firstName || !lastName  || !contact || loading} className={`px-4 py-2 rounded w-full sm:w-auto ${!firstName || !lastName ||  !contact || loading ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#2a6bb7] text-white'}`}>
-                  {loading ? 'Starting...' : 'Next'}
+                <button 
+                  onClick={handleNext} 
+                  disabled={!firstName || !lastName || !contact || !dob || !gender || !address || loading} 
+                  className={`px-4 py-2 rounded w-full sm:w-auto ${!firstName || !lastName || !contact || !dob || !gender || !address || loading ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[#2a6bb7] text-white'}`}
+                >
+                  {loading ? 'Saving...' : 'Next'}
                 </button>
               </div>
             </div>

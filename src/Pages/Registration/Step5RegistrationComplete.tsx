@@ -1,26 +1,99 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { QRCodeCanvas } from 'qrcode.react'
-import { ShieldCheck } from 'lucide-react'
-
-const randomId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9).toUpperCase()}`
+import { ShieldCheck, Loader2 } from 'lucide-react'
+import { completeRegistration } from './Services/registrationService'
 
 const Step5RegistrationComplete: React.FC = () => {
   const navigate = useNavigate()
-
-  const patientId = useMemo(() => randomId('SHC'), [])
-  const dhc = useMemo(() => `DHC-${Math.random().toString(36).slice(2, 12).toUpperCase()}`, [])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [patientData, setPatientData] = useState<{
+    mrn: string;
+    userId: string;
+    name: string;
+    email: string;
+  } | null>(null)
 
   useEffect(() => {
-    try {
-      const reg = JSON.parse(localStorage.getItem('registration') || '{}')
-      const user = { id: patientId, dhc, username: reg.credentials?.username || null }
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('registration_complete', JSON.stringify({ ...reg, completedAt: new Date().toISOString(), patientId, dhc }))
-    } catch {
-      // ignore
+    const completeProcess = async () => {
+      try {
+        setLoading(true)
+        setError('')
+
+        const reg = JSON.parse(localStorage.getItem('registration') || '{}')
+        const registrationId = reg?.registrationId
+
+        if (!registrationId) {
+          throw new Error('Missing registration ID. Please start from Step 1.')
+        }
+
+        // Call the complete registration API
+        // Note: Auth token and user data are automatically saved by the service
+        const response = await completeRegistration(registrationId)
+
+        // Update registration complete data
+        localStorage.setItem('registration_complete', JSON.stringify({
+          ...reg,
+          completedAt: new Date().toISOString(),
+          userId: response.user.id,
+          mrn: response.patient.mrn,
+        }))
+
+        setPatientData({
+          mrn: response.patient.mrn,
+          userId: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+        })
+
+        setLoading(false)
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        setError(message || 'Failed to complete registration')
+        setLoading(false)
+      }
     }
-  }, [patientId, dhc])
+
+    completeProcess()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f5f8fd] flex flex-col items-center justify-center py-12 px-6">
+        <div className="w-full max-w-3xl text-center">
+          <img src="/logo.png" alt="Health1st" className="mx-auto mb-6 w-28" />
+          <div className="bg-white p-8 rounded-lg shadow-sm">
+            <Loader2 className="w-12 h-12 mx-auto mb-4 text-[#2a6bb7] animate-spin" />
+            <div className="text-xl font-semibold mb-2">Completing Registration...</div>
+            <p className="text-gray-600">Please wait while we finalize your account.</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#f5f8fd] flex flex-col items-center justify-center py-12 px-6">
+        <div className="w-full max-w-3xl text-center">
+          <img src="/logo.png" alt="Health1st" className="mx-auto mb-6 w-28" />
+          <div className="bg-white p-8 rounded-lg shadow-sm">
+            <div className="text-red-600 text-xl font-semibold mb-2">Registration Failed</div>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button 
+              onClick={() => navigate('/register')} 
+              className="px-6 py-2 bg-[#2a6bb7] text-white rounded"
+            >
+              Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!patientData) return null
 
   return (
     <div className="min-h-screen bg-[#f5f8fd] flex flex-col items-center py-12 px-6">
@@ -31,11 +104,12 @@ const Step5RegistrationComplete: React.FC = () => {
           <div className="text-3xl font-bold mb-2">Registration Successful</div>
           <p className="mb-4">Congratulations! Your account has been successfully created.</p>
 
-          <div className="text-sm mb-3">Patient ID: <span className="font-medium">{patientId}</span></div>
-          <div className="text-sm mb-6">Digital Health Card Number: <span className="font-medium">{dhc}</span></div>
+          <div className="text-sm mb-3">Patient Name: <span className="font-medium">{patientData.name}</span></div>
+          <div className="text-sm mb-3">Email: <span className="font-medium">{patientData.email}</span></div>
+          <div className="text-sm mb-6">Medical Record Number (MRN): <span className="font-medium">{patientData.mrn}</span></div>
 
           <div className="mx-auto mb-4 w-40 h-40 bg-white rounded flex items-center justify-center">
-            <QRCodeCanvas value={`${patientId}|${dhc}`} size={120} />
+            <QRCodeCanvas value={`${patientData.userId}|${patientData.mrn}`} size={120} />
           </div>
 
           <button onClick={() => navigate('/register/step-6')} className="px-6 py-2 bg-white text-[#2a6bb7] rounded">Continue</button>

@@ -7,9 +7,9 @@ import Card from '../../ui/Card'
 import Button from '../../ui/Button'
 import { Loader2 } from 'lucide-react'
 import AppointmentWizardHeader from './AppointmentWizardHeader'
-import hospitalsJson from '../../lib/data/hospitals.json' assert { type: 'json' }
 import { useAppointmentBooking } from '../../contexts/AppointmentBookingContext'
 import type { Hospital } from '../../types/appointment'
+import { fetchHospitals, type ApiHospital } from '../../lib/utils/appointmentApi'
 
 const distanceFilters = [
   { label: 'Any Distance', value: 'any' },
@@ -30,15 +30,29 @@ const LOAD_MORE_ROWS = 2
 const INITIAL_VISIBLE = CARDS_PER_ROW * INITIAL_ROWS
 const LOAD_MORE_INCREMENT = CARDS_PER_ROW * LOAD_MORE_ROWS
 
-const hospitals = hospitalsJson as Hospital[]
-
-const parseDistance = (distance: string) => {
+const parseDistance = (distance: string | number) => {
+  if (typeof distance === 'number') return distance
   const match = distance.match(/([\d.]+)/)
   return match ? Number.parseFloat(match[1]) : Number.POSITIVE_INFINITY
 }
 
+// Convert API hospital to app Hospital type
+const convertApiHospital = (apiHospital: ApiHospital): Hospital => ({
+  id: apiHospital._id,
+  name: apiHospital.name,
+  address: apiHospital.address,
+  phone: apiHospital.phone,
+  image: apiHospital.image,
+  distance: apiHospital.distance,
+  specialities: apiHospital.specialities,
+  type: apiHospital.type
+})
+
 const MakeAppointment: React.FC = () => {
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const navigate = useNavigate()
   const { state: bookingState, setHospital } = useAppointmentBooking()
   const [searchTerm, setSearchTerm] = useState('')
@@ -47,13 +61,52 @@ const MakeAppointment: React.FC = () => {
   const [hospitalType, setHospitalType] = useState<'all' | 'government' | 'private'>('all')
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE)
 
+  // Fetch hospitals from API
+  useEffect(() => {
+    const loadHospitals = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const params: any = {
+          limit: 100 // Fetch more initially
+        };
+        
+        // Apply filters if not 'all' or 'any'
+        if (hospitalType !== 'all') {
+          params.type = hospitalType === 'government' ? 'Government' : 'Private';
+        }
+        
+        if (speciality !== 'any') {
+          params.speciality = speciality;
+        }
+
+        const response = await fetchHospitals(params);
+        
+        if (response.success) {
+          const convertedHospitals = response.data.hospitals.map(convertApiHospital);
+          setHospitals(convertedHospitals);
+        } else {
+          setError('Failed to load hospitals');
+        }
+      } catch (err) {
+        console.error('Error fetching hospitals:', err);
+        setError('Failed to load hospitals. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadHospitals();
+  }, [hospitalType, speciality]);
+
   const specialityOptions = useMemo(() => {
     const unique = new Set<string>()
     hospitals.forEach((hospital) => {
       hospital.specialities.forEach((item) => unique.add(item))
     })
     return ['any', ...Array.from(unique).sort()]
-  }, [])
+  }, [hospitals])
 
   const filteredHospitals = useMemo(() => {
     return hospitals.filter((hospital) => {
@@ -84,6 +137,9 @@ const MakeAppointment: React.FC = () => {
 
   const renderHospitalCard = (hospital: Hospital) => {
     const isSelected = bookingState.hospital?.id === hospital.id
+    const distanceText = typeof hospital.distance === 'number' 
+      ? `${hospital.distance} miles away` 
+      : hospital.distance
 
     return (
       <Card
@@ -100,7 +156,7 @@ const MakeAppointment: React.FC = () => {
             <img src={hospital.image} alt={hospital.name} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#13244b]/65 via-transparent to-transparent" />
             <span className="absolute left-3 top-3 rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-semibold text-[#1e3f91] shadow-[0_10px_24px_-18px_rgba(30,63,145,0.7)]">
-              {hospital.distance} away
+              {distanceText}
             </span>
           </div>
         }
@@ -134,6 +190,36 @@ const MakeAppointment: React.FC = () => {
 
   const visibleHospitals = filteredHospitals.slice(0, visibleCount)
   const hasMoreHospitals = visibleCount < filteredHospitals.length
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <AppointmentWizardHeader />
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="animate-spin h-12 w-12 text-[#2a6bb7]" />
+          <span className="ml-4 text-lg text-[#6f7d95]">Loading hospitals...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <AppointmentWizardHeader />
+        <div className="rounded-3xl border border-red-200 bg-red-50 p-10 text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="rounded-full px-6 py-3"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

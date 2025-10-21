@@ -1,22 +1,49 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ArrowUpDown, CalendarClock, ChevronDown, Star, Sun } from 'lucide-react'
+import { ArrowUpDown, CalendarClock, ChevronDown, Star, Sun, Loader2 } from 'lucide-react'
 import Card from '../../ui/Card'
 import Button from '../../ui/Button'
 import AppointmentWizardHeader from './AppointmentWizardHeader'
-import hospitalsJson from '../../lib/data/hospitals.json' assert { type: 'json' }
-import type { Hospital } from '../../types/appointment'
-import { getDoctorsByDepartment, type Doctor } from '../../lib/utils/doctors'
 import { useAppointmentBooking } from '../../contexts/AppointmentBookingContext'
-
-const hospitals = hospitalsJson as Hospital[]
+import { fetchDoctors, type ApiDoctor } from '../../lib/utils/appointmentApi'
 
 type LocationState = {
 	hospitalName?: string
 	departmentName?: string
+	departmentId?: string
 	selectedServiceId?: string | null
 	selectedDoctorId?: string | null
 }
+
+type Doctor = {
+	id: string
+	name: string
+	title: string
+	bio: string
+	avatarUrl?: string
+	rating: number
+	reviewCount: number
+	departments: { name: string; slug: string }[]
+	availabilityStatus?: string
+	nextAvailableDate?: string
+}
+
+// Convert API doctor to app Doctor type
+const convertApiDoctor = (apiDoctor: ApiDoctor): Doctor => ({
+	id: apiDoctor._id,
+	name: apiDoctor.name,
+	title: apiDoctor.specialization,
+	bio: apiDoctor.bio,
+	avatarUrl: apiDoctor.profileImage,
+	rating: apiDoctor.rating,
+	reviewCount: apiDoctor.reviewCount,
+	departments: [{
+		name: apiDoctor.departmentId.name,
+		slug: apiDoctor.departmentId.slug
+	}],
+	availabilityStatus: 'available_today', // Default for now
+	nextAvailableDate: undefined
+})
 
 const capitalizeFromSlug = (value: string | undefined): string => {
 	if (!value) {
@@ -78,35 +105,52 @@ const SelectDoctor: React.FC = () => {
 	const [expandedBioDoctorId, setExpandedBioDoctorId] = useState<string | null>(null)
 	const [selectedSpecialization, setSelectedSpecialization] = useState<string>('all')
 	const [availabilityFilter, setAvailabilityFilter] = useState<'all' | 'available_today' | 'next_available'>('all')
+	
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState<string | null>(null)
+	const [doctors, setDoctors] = useState<Doctor[]>([])
 
-	const hospital = useMemo(
-		() => hospitals.find((candidate) => candidate.id === hospitalId),
-		[hospitalId]
-	)
-
+	// Fetch doctors from API
 	useEffect(() => {
-		if (!hospital) {
+		if (!hospitalId || !departmentSlug || !state.departmentId) {
 			return
 		}
 
-		if (!bookingState.hospital || bookingState.hospital.id !== hospital.id) {
-			setHospital(hospital)
-		}
-	}, [bookingState.hospital, hospital, setHospital])
+		const loadDoctors = async () => {
+			try {
+				setLoading(true)
+				setError(null)
 
-	const doctors = useMemo<Doctor[]>(
-		() => (departmentSlug ? getDoctorsByDepartment(departmentSlug) : []),
-		[departmentSlug]
-	)
+				const response = await fetchDoctors({
+					departmentSlug,
+					departmentId: state.departmentId || bookingState.department?.id || '',
+					hospitalId,
+					limit: 50
+				})
+				
+				if (response.success) {
+					const convertedDoctors = response.data.doctors.map(convertApiDoctor)
+					setDoctors(convertedDoctors)
+				} else {
+					setError('Failed to load doctors')
+				}
+			} catch (err) {
+				console.error('Error fetching doctors:', err)
+				setError('Failed to load doctors. Please try again.')
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		loadDoctors()
+	}, [hospitalId, departmentSlug, state.departmentId, bookingState.department?.id])
 
 	const specializationOptions = useMemo(() => {
 		const unique = new Map<string, string>()
 		doctors.forEach((doctor) => {
-			doctor.departments.forEach((department) => {
-				if (!unique.has(department.slug)) {
-					unique.set(department.slug, department.name)
-				}
-			})
+			if (doctor.title && !unique.has(doctor.title)) {
+				unique.set(doctor.title, doctor.title)
+			}
 		})
 
 		return [{ value: 'all', label: 'All Specializations' }, ...Array.from(unique.entries()).map(([value, label]) => ({ value, label }))]
@@ -116,7 +160,7 @@ const SelectDoctor: React.FC = () => {
 		return doctors.filter((doctor) => {
 			const matchesSpecialization =
 				selectedSpecialization === 'all' ||
-				doctor.departments.some((department) => department.slug === selectedSpecialization)
+				doctor.title === selectedSpecialization
 
 			const matchesAvailability =
 				availabilityFilter === 'all' || doctor.availabilityStatus === availabilityFilter
@@ -213,6 +257,36 @@ const SelectDoctor: React.FC = () => {
 				selectedDoctorId: bookingState.doctor.id
 			}
 		})
+	}
+
+	if (loading) {
+		return (
+			<div className="space-y-8">
+				<AppointmentWizardHeader />
+				<div className="flex justify-center items-center py-20">
+					<Loader2 className="animate-spin h-12 w-12 text-[#2a6bb7]" />
+					<span className="ml-4 text-lg text-[#6f7d95]">Loading doctors...</span>
+				</div>
+			</div>
+		)
+	}
+
+	if (error) {
+		return (
+			<div className="space-y-8">
+				<AppointmentWizardHeader />
+				<div className="rounded-3xl border border-red-200 bg-red-50 p-10 text-center">
+					<p className="text-red-600 mb-4">{error}</p>
+					<Button
+						type="button"
+						onClick={() => navigate(-1)}
+						className="rounded-full px-6 py-3"
+					>
+						Back to Services
+					</Button>
+				</div>
+			</div>
+		)
 	}
 
 	return (

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../lib/utils/auth';
 
 const initialProfile = {
   name: 'Chamodi Dilki',
@@ -14,10 +16,22 @@ const initialProfile = {
 };
 
 const ProfilePage: React.FC = () => {
+  const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [profile, setProfile] = useState(initialProfile);
   const [editing, setEditing] = useState<{[key: string]: boolean}>({});
   const [editValues, setEditValues] = useState<{[key: string]: string}>({});
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway
+      navigate('/login');
+    }
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -261,7 +275,12 @@ const ProfilePage: React.FC = () => {
           <div className="w-full mt-8 flex flex-col sm:flex-row gap-2 sm:gap-4">
             <button className="flex-1 rounded-lg bg-[#2a6bb7] px-4 sm:px-6 py-2 sm:py-3 text-white font-semibold shadow-lg hover:bg-[#1f4f8a] transition-all duration-150">Edit Profile</button>
             <button className="flex-1 rounded-lg bg-[#eaf1ff] px-4 sm:px-6 py-2 sm:py-3 text-[#2a6bb7] font-semibold border border-[#dbeafe] shadow-lg hover:bg-[#dbeafe] transition-all duration-150">Change Password</button>
-            <button className="flex-1 rounded-lg bg-[#ffeaea] px-4 sm:px-6 py-2 sm:py-3 text-[#c0392b] font-semibold border border-[#ffd6d6] shadow-lg hover:bg-[#ffd6d6] transition-all duration-150">Logout</button>
+            <button 
+              onClick={handleLogout}
+              className="flex-1 rounded-lg bg-[#ffeaea] px-4 sm:px-6 py-2 sm:py-3 text-[#c0392b] font-semibold border border-[#ffd6d6] shadow-lg hover:bg-[#ffd6d6] transition-all duration-150"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>

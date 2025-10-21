@@ -4,14 +4,16 @@ export type Hospital = {
 	address: string
 	phone: string
 	image: string
-	distance: string
+	distance: string | number
 	specialities: string[]
 	type: 'Government' | 'Private'
 }
 
 export type AppointmentDepartment = {
+	id?: string
 	name: string
 	slug: string
+	services?: AppointmentService[]
 }
 
 export type AppointmentService = {
@@ -24,12 +26,19 @@ export type AppointmentDoctor = {
 	id: string
 	name?: string
 	title?: string
+	bio?: string
+	specialization?: string
+	profileImage?: string
+	rating?: number
+	reviewCount?: number
 }
 
 export type AppointmentSlot = {
+	id?: string
 	dayIndex: number
 	timeLabel: string
 	date: string
+	isAvailable?: boolean
 }
 
 export type PaymentMethod = 'card' | 'paypal' | 'pay_on_site'

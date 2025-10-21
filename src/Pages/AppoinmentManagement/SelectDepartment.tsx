@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   Activity,
@@ -9,16 +9,14 @@ import {
   HeartPulse,
   Microscope,
   ShieldPlus,
-  Stethoscope
+  Stethoscope,
+  Loader2
 } from 'lucide-react'
 import Button from '../../ui/Button'
 import Card from '../../ui/Card'
 import AppointmentWizardHeader from './AppointmentWizardHeader'
-import hospitalsJson from '../../lib/data/hospitals.json' assert { type: 'json' }
-import type { Hospital } from '../../types/appointment'
 import { useAppointmentBooking } from '../../contexts/AppointmentBookingContext'
-
-const hospitals = hospitalsJson as Hospital[]
+import { fetchDepartments, type ApiDepartment } from '../../lib/utils/appointmentApi'
 
 type Service = {
   id: string
@@ -28,6 +26,37 @@ type Service = {
 }
 
 const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+const getIconForService = (title: string): React.ReactNode => {
+  const normalized = title.toLowerCase()
+  
+  if (normalized.includes('cardiac') || normalized.includes('heart') || normalized.includes('echo')) {
+    return <HeartPulse className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('consultation') || normalized.includes('consult')) {
+    return <Stethoscope className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('wellness') || normalized.includes('child')) {
+    return <Baby className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('immun') || normalized.includes('vaccin')) {
+    return <ShieldPlus className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('neuro') || normalized.includes('brain')) {
+    return <Brain className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('imaging') || normalized.includes('diagnostic') || normalized.includes('test')) {
+    return <Microscope className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('injury') || normalized.includes('pain') || normalized.includes('therapy')) {
+    return <Bandage className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  if (normalized.includes('stress') || normalized.includes('ecg') || normalized.includes('activity')) {
+    return <Activity className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+  }
+  
+  return <Stethoscope className="h-6 w-6 text-[#2a6bb7]" strokeWidth={1.8} />
+}
 
 const getServicesForDepartment = (department: string): Service[] => {
   const normalized = department.toLowerCase()
@@ -238,73 +267,164 @@ const SelectDepartment: React.FC = () => {
   const navigate = useNavigate()
   const { hospitalId } = useParams<{ hospitalId: string }>()
   const { state: bookingState, setHospital, setDepartment, setService } = useAppointmentBooking()
+  
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [departments, setDepartments] = useState<ApiDepartment[]>([])
 
-  const hospital = useMemo(() => hospitals.find((item) => item.id === hospitalId), [hospitalId])
-
-  const departmentOptions = useMemo(() => hospital?.specialities ?? [], [hospital])
-
+  const selectedDepartmentId = bookingState.department?.id ?? null
   const selectedDepartmentName = bookingState.department?.name ?? ''
   const selectedServiceId = bookingState.service?.id ?? null
 
+  // Fetch departments from API
   useEffect(() => {
-    if (!hospital) {
+    if (!hospitalId) {
       return
     }
 
-    if (!bookingState.hospital || bookingState.hospital.id !== hospital.id) {
-      setHospital(hospital)
-    }
-  }, [bookingState.hospital, hospital, setHospital])
+    const loadDepartments = async () => {
+      try {
+        setLoading(true)
+        setError(null)
 
+        const response = await fetchDepartments(hospitalId, { limit: 50 })
+        
+        if (response.success) {
+          setDepartments(response.data.departments)
+        } else {
+          setError('Failed to load departments')
+        }
+      } catch (err) {
+        console.error('Error fetching departments:', err)
+        setError('Failed to load departments. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadDepartments()
+  }, [hospitalId])
+
+  // Set hospital if not already set
   useEffect(() => {
-    if (departmentOptions.length === 0) {
-      if (selectedDepartmentName) {
-        setDepartment(null)
+    if (!bookingState.hospital && hospitalId && departments.length > 0) {
+      // Try to get hospital info from the first department
+      const firstDept = departments[0]
+      if (firstDept?.hospitalId) {
+        setHospital({
+          id: firstDept.hospitalId._id,
+          name: firstDept.hospitalId.name,
+          address: '',
+          phone: '',
+          image: '',
+          distance: 0,
+          specialities: [],
+          type: 'Government'
+        })
       }
-      if (selectedServiceId) {
-        setService(null)
-      }
+    }
+  }, [bookingState.hospital, hospitalId, departments, setHospital])
+
+  // Set default department if none selected
+  useEffect(() => {
+    if (departments.length === 0) {
       return
     }
 
-    if (selectedDepartmentName && departmentOptions.includes(selectedDepartmentName)) {
-      return
+    // If a department is selected and it exists in the list, keep it
+    if (selectedDepartmentId) {
+      const exists = departments.some(d => d._id === selectedDepartmentId)
+      if (exists) {
+        return
+      }
     }
 
-    const defaultDepartment = departmentOptions[0]
-    setDepartment({ name: defaultDepartment, slug: slugify(defaultDepartment) })
-  }, [departmentOptions, selectedDepartmentName, selectedServiceId, setDepartment, setService])
+    // Otherwise, select the first department
+    const defaultDepartment = departments[0]
+    setDepartment({ 
+      id: defaultDepartment._id,
+      name: defaultDepartment.name, 
+      slug: defaultDepartment.slug,
+      services: defaultDepartment.services.map(s => ({
+        id: s._id,
+        title: s.title,
+        description: s.description
+      }))
+    })
+  }, [departments, selectedDepartmentId, setDepartment])
+
+  const selectedDepartment = useMemo(() => {
+    return departments.find(d => d._id === selectedDepartmentId || d.name === selectedDepartmentName)
+  }, [departments, selectedDepartmentId, selectedDepartmentName])
 
   const services = useMemo(() => {
-    if (!selectedDepartmentName) {
+    if (!selectedDepartment) {
       return []
     }
-    return getServicesForDepartment(selectedDepartmentName)
-  }, [selectedDepartmentName])
+    
+    // Use services from API
+    return selectedDepartment.services.map(service => ({
+      id: service._id,
+      title: service.title,
+      description: service.description,
+      icon: getIconForService(service.title)
+    }))
+  }, [selectedDepartment])
 
   const handleGoToDoctorSelection = () => {
-    if (!hospital || !bookingState.department || !bookingState.service) {
+    if (!hospitalId || !bookingState.department || !bookingState.service) {
       return
     }
 
     const departmentSlug = bookingState.department.slug
 
-    navigate(`/appointments/new/${hospital.id}/services/${departmentSlug}/doctors`, {
+    navigate(`/appointments/new/${hospitalId}/services/${departmentSlug}/doctors`, {
       state: {
-        hospitalName: hospital.name,
+        hospitalName: bookingState.hospital?.name,
         departmentName: bookingState.department.name,
+        departmentId: bookingState.department.id,
         selectedServiceId: bookingState.service.id
       }
     })
   }
 
-  if (!hospital) {
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <AppointmentWizardHeader />
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="animate-spin h-12 w-12 text-[#2a6bb7]" />
+          <span className="ml-4 text-lg text-[#6f7d95]">Loading departments...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <AppointmentWizardHeader />
+        <div className="rounded-3xl border border-red-200 bg-red-50 p-10 text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="rounded-full px-6 py-3"
+          >
+            Back to Hospitals
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (departments.length === 0) {
     return (
       <div className="space-y-6">
-        <h2 className="text-3xl font-semibold text-[#1b2b4b]">Hospital not found</h2>
+        <AppointmentWizardHeader />
+        <h2 className="text-3xl font-semibold text-[#1b2b4b]">No departments found</h2>
         <p className="text-sm text-[#6f7d95]">
-          We could not find the hospital you selected. Please return to the hospital selection page
-          and try again.
+          No departments are available for this hospital at the moment.
         </p>
         <Button
           type="button"
@@ -334,15 +454,27 @@ const SelectDepartment: React.FC = () => {
           <div className="mt-4 max-w-md">
             <div className="relative flex h-11 items-center rounded-[18px] border border-[#d9e3f7] bg-white px-1.5 transition focus-within:border-[#2a6bb7]">
               <select
-                value={selectedDepartmentName}
-                onChange={(event) =>
-                  setDepartment({ name: event.target.value, slug: slugify(event.target.value) })
-                }
+                value={selectedDepartmentId || ''}
+                onChange={(event) => {
+                  const dept = departments.find(d => d._id === event.target.value)
+                  if (dept) {
+                    setDepartment({ 
+                      id: dept._id,
+                      name: dept.name, 
+                      slug: dept.slug,
+                      services: dept.services.map(s => ({
+                        id: s._id,
+                        title: s.title,
+                        description: s.description
+                      }))
+                    })
+                  }
+                }}
                 className="h-full w-full appearance-none rounded-[14px] border-none bg-transparent px-4 pr-10 text-sm font-medium text-[#1f2a44] focus:outline-none"
               >
-                {departmentOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                {departments.map((dept) => (
+                  <option key={dept._id} value={dept._id}>
+                    {dept.name}
                   </option>
                 ))}
               </select>

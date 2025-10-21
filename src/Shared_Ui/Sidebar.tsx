@@ -1,5 +1,6 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { logout } from '../lib/utils/auth'
 
 const primaryLinks = [
   { label: 'Dashboard', to: '/', end: true, icon: (
@@ -50,6 +51,18 @@ const utilityLinks = [
 ]
 
 const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/login');
+    }
+  };
+
   return (
   <aside className="hidden h-full w-64 flex-col overflow-y-auto border-r border-[#e1eaf5] bg-white px-5 py-6 text-[#1b2b4b] no-scrollbar lg:flex">
       <nav className="flex-1 space-y-8">
@@ -74,6 +87,19 @@ const Sidebar: React.FC = () => {
             const highlightClasses = item.highlight
               ? 'text-[#c0392b] hover:bg-[#f9e9e9] hover:text-[#c0392b]'
               : 'hover:bg-[#f0f6ff] hover:text-[#2a6bb7]'
+
+            if (item.label === 'Logout') {
+              return (
+                <button
+                  key={item.label}
+                  onClick={handleLogout}
+                  className={`${baseClasses} ${highlightClasses} w-full text-left`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              )
+            }
 
             return (
               <a key={item.label} href="#" className={`${baseClasses} ${highlightClasses}`}>

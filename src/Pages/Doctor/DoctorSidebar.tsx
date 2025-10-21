@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { logout } from '../../lib/utils/auth';
 
 const doctorLinks = [
   { label: 'Dashboard', to: '/doctor/dashboard', icon: (
@@ -50,26 +51,52 @@ const doctorLinks = [
   ), highlight: true }
 ];
 
-const DoctorSidebar: React.FC = () => (
-  <aside className="hidden lg:flex flex-col w-64 min-h-screen overflow-y-auto border-r border-[#e1eaf5] bg-white px-5 py-6 text-[#1b2b4b] no-scrollbar">
-    <nav className="flex-1 space-y-8">
-      <div className="space-y-2">
-        {doctorLinks.map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) => `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
-              isActive ? 'bg-[#eef4ff] text-[#2a6bb7]' : 'hover:bg-[#f0f6ff] hover:text-[#2a6bb7]'
-            }${item.highlight ? ' text-[#c0392b] hover:bg-[#f9e9e9] hover:text-[#c0392b]' : ''}`}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </NavLink>
-        ))}
-      </div>
-    </nav>
-  </aside>
-);
+const DoctorSidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/login');
+    }
+  };
+
+  return (
+    <aside className="hidden lg:flex flex-col w-64 min-h-screen overflow-y-auto border-r border-[#e1eaf5] bg-white px-5 py-6 text-[#1b2b4b] no-scrollbar">
+      <nav className="flex-1 space-y-8">
+        <div className="space-y-2">
+          {doctorLinks.map((item) => 
+            item.label === 'Logout' ? (
+              <button
+                key={item.label}
+                onClick={handleLogout}
+                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition w-full text-left text-[#c0392b] hover:bg-[#f9e9e9] hover:text-[#c0392b]"
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            ) : (
+              <NavLink
+                key={item.label}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) => `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
+                  isActive ? 'bg-[#eef4ff] text-[#2a6bb7]' : 'hover:bg-[#f0f6ff] hover:text-[#2a6bb7]'
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </NavLink>
+            )
+          )}
+        </div>
+      </nav>
+    </aside>
+  );
+};
 
 export default DoctorSidebar;

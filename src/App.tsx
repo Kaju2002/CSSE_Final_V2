@@ -17,6 +17,10 @@ import RoleBasedDashboard from "./Pages/RoleBasedDashboard";
 import FeedbackPage from "./Pages/AppoinmentManagement/FeedbackPage";
 import UserManagement from "./Pages/Admin/UserManagement";
 import StaffManagement from "./Pages/Admin/StaffManagement";
+import DoctorManagement from "./Pages/Admin/DoctorManagement";
+import HospitalManagement from "./Pages/Admin/HospitalManagement";
+import DepartmentManagement from "./Pages/Admin/DepartmentManagement";
+import ServicesManagement from "./Pages/Admin/ServicesManagement";
 import DoctorDashboard from "./Pages/Doctor/DoctorDashboard";
 import DoctorAppointments from "./Pages/Doctor/DoctorAppointments";
 import DoctorPatients from "./Pages/Doctor/DoctorPatients";
@@ -26,13 +30,13 @@ import DoctorSettings from "./Pages/Doctor/DoctorSettings";
 import HospitalStats from "./Pages/Admin/HospitalStats";
 import Reports from "./Pages/Admin/Reports";
 import PatientReports from "./Pages/Admin/PatientReports";
+import StaffScheduling from "./Pages/Admin/StaffScheduling";
 import Settings from "./Pages/Admin/Settings";
 import AppointmentWizard from "./Pages/AppoinmentManagement/AppointmentWizard";
 import Step1PersonalInfo from "./Pages/Registration/Step1PersonalInfo";
 import Step2Placeholder from "./Pages/Registration/Step2Placeholder";
 import Step3MedicalInfo from "./Pages/Registration/Step3MedicalInfo";
 import Step4CommunicationCredentials from "./Pages/Registration/Step4CommunicationCredentials";
-import Step5RegistrationComplete from "./Pages/Registration/Step5RegistrationComplete";
 import Step6RegistrationComplete from "./Pages/Registration/Step6RegistrationComplete";
 import CheckIn from "./Pages/MedicalRecordManagement/Staff/CheckIn";
 import StaffAuth from "./Pages/MedicalRecordManagement/Staff/StaffAuth";
@@ -97,10 +101,6 @@ function App() {
             element={<Step4CommunicationCredentials />}
           />
           <Route
-            path="/register/step-5"
-            element={<Step5RegistrationComplete />}
-          />
-          <Route
             path="/register/step-6"
             element={<Step6RegistrationComplete />}
           />
@@ -116,10 +116,15 @@ function App() {
           {/* Admin routes */}
           <Route path="/admin/user-management" element={<UserManagement />} />
           <Route path="/admin/staff-management" element={<StaffManagement />} />
+          <Route path="/admin/doctor-management" element={<DoctorManagement />} />
+          <Route path="/admin/hospital-management" element={<HospitalManagement />} />
+          <Route path="/admin/department-management" element={<DepartmentManagement />} />
+          <Route path="/admin/services-management" element={<ServicesManagement />} />
           <Route path="/admin/hospital-stats" element={<HospitalStats />} />
           <Route path="/admin/reports" element={<Navigate to="/admin/reports/hospital" replace />} />
           <Route path="/admin/reports/hospital" element={<Reports />} />
           <Route path="/admin/reports/patients" element={<PatientReports />} />
+          <Route path="/admin/staff-scheduling" element={<StaffScheduling />} />
           <Route path="/admin/settings" element={<Settings />} />
           <Route element={<Home />}>
             <Route index element={<Dashboard />} />

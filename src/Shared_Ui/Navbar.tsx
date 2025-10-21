@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Bell, CalendarCheck, LogIn, LogOut, Menu, Search, User, UserRound } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import NotificationSheet from './NotificationSheet'
+import { logout } from '../lib/utils/auth'
 
 interface NavbarProps {
   role?: 'doctor' | 'patient';
@@ -13,6 +14,17 @@ const Navbar: React.FC<NavbarProps> = ({ role = 'patient' }) => {
   const [notificationSheetOpen, setNotificationSheetOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+      // Navigate to login anyway
+      navigate('/login')
+    }
+  }
 
   useEffect(() => {
     const handleClickAway = (event: MouseEvent) => {
@@ -133,7 +145,7 @@ const Navbar: React.FC<NavbarProps> = ({ role = 'patient' }) => {
                   <button
                     type="button"
                     className="flex items-center gap-2 px-4 py-2.5 text-[#c0392b] transition hover:bg-[#f9e9e9]"
-                    onClick={() => navigate('/login')}
+                    onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4" strokeWidth={1.8} />
                     Logout
@@ -178,7 +190,7 @@ const Navbar: React.FC<NavbarProps> = ({ role = 'patient' }) => {
             <button
               type="button"
               className="flex items-center gap-2 px-4 py-2.5 text-[#c0392b] transition hover:bg-[#f9e9e9]"
-              onClick={() => { setMobileMenuOpen(false); navigate('/login') }}
+              onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
             >
               <LogOut className="h-4 w-4" strokeWidth={1.8} />
               Logout

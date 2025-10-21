@@ -1,42 +1,50 @@
-import React, { useState } from 'react'
-import data from '../../lib/data/medicalRecords.json'
+import React, { useState, useEffect } from 'react'
 
-type Medication = {
-  id: string
-  name: string
-  dose: string
-  frequency: string
-  startDate: string
+// API Types
+interface MedicalRecord {
+  _id: string
+  patientId: string
+  doctorId: {
+    _id: string
+    name: string
+    specialization: string
+  }
+  recordType: 'diagnosis' | 'procedure' | 'medication' | 'lab' | 'imaging' | 'allergy' | 'immunization' | 'document'
+  description: string
   status: string
-  prescriber: string
+  date: string
+  files: string[]
+  createdAt: string
+  updatedAt: string
 }
 
-type Allergy = { id: string; substance: string; reaction: string; severity: string }
-
-type Lab = { id: string; test: string; result: string; normalRange: string; date: string }
-
-type Immunization = { id: string; vaccine: string; date: string }
-
-type Document = { id: string; title: string; type: string; date: string }
-
-type Patient = { id: number; name: string; dob: string; gender: string; medicalRecordNumber: string; primaryCare: string; photo?: string }
-
-type Summary = { heightCm: number; weightKg: number; bloodType: string; lastVisit: string; activeProblems: string[] }
-
-type Appointment = { id: string; date: string; doctor: string; department: string; status: string }
-
-type MedicalRecordsData = {
-  patient: Patient
-  summary: Summary
-  medications: Medication[]
-  allergies: Allergy[]
-  labs: Lab[]
-  immunizations: Immunization[]
-  documents: Document[]
-  appointments: Appointment[]
+interface PatientInfo {
+  id: string
+  mrn: string
+  firstName: string
+  lastName: string
+  dob: string
+  gender: string
+  contactInfo: {
+    phone: string
+    email: string
+    address: string
+  }
 }
 
-const records = data as unknown as MedicalRecordsData
+interface ApiResponse {
+  success: boolean
+  data: {
+    records: MedicalRecord[]
+  }
+}
+
+interface PatientResponse {
+  success: boolean
+  data: {
+    patient: PatientInfo
+  }
+}
 
 type TabKey = 'summary' | 'medications' | 'allergies' | 'labs' | 'immunizations' | 'documents'
 
@@ -53,28 +61,164 @@ const Badge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <span className="inline-flex items-center rounded-full bg-[#eef4ff] px-2 py-1 text-xs font-medium text-[#2a6bb7]">{children}</span>
 )
 
-const PatientCard: React.FC = () => (
-  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-2xl border border-[#eef4ff] shadow-sm">
-    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">👩‍⚕️</div>
-    <div className="flex-1">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-        <h2 className="text-base sm:text-lg font-semibold text-[#17325a]">{records.patient.name}</h2>
-        <Badge>{records.patient.medicalRecordNumber}</Badge>
+const PatientCard: React.FC<{ patient: PatientInfo | null; loading: boolean }> = ({ patient, loading }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#eef4ff] shadow-sm animate-pulse">
+        <div className="w-16 h-16 rounded-full bg-gray-200"></div>
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        </div>
       </div>
-      <div className="text-xs sm:text-sm text-gray-500">DOB {new Date(records.patient.dob).toLocaleDateString()} · {records.patient.gender}</div>
-      <div className="text-xs sm:text-sm text-gray-500">Primary care: {records.patient.primaryCare}</div>
+    )
+  }
+
+  if (!patient) return null
+
+  return (
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-2xl border border-[#eef4ff] shadow-sm">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#e8f1ff] to-[#eef7ff] flex items-center justify-center text-2xl">
+        {patient.gender === 'Female' ? '👩‍⚕️' : '👨‍⚕️'}
+      </div>
+      <div className="flex-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+          <h2 className="text-base sm:text-lg font-semibold text-[#17325a]">
+            {patient.firstName} {patient.lastName}
+          </h2>
+          <Badge>{patient.mrn}</Badge>
+        </div>
+        <div className="text-xs sm:text-sm text-gray-500">
+          DOB {new Date(patient.dob).toLocaleDateString()} · {patient.gender}
+        </div>
+        <div className="text-xs sm:text-sm text-gray-500">
+          Email: {patient.contactInfo.email}
+        </div>
+      </div>
     </div>
-    <div className="text-xs sm:text-right sm:text-sm text-gray-500">Last visit: {new Date(records.summary.lastVisit).toLocaleDateString()}</div>
-  </div>
-)
+  )
+}
 
 const MedicalRecords: React.FC = () => {
   const [active, setActive] = useState<TabKey>('summary')
+  const [records, setRecords] = useState<MedicalRecord[]>([])
+  const [patient, setPatient] = useState<PatientInfo | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    fetchMedicalRecords()
+  }, [])
+
+  const fetchMedicalRecords = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      // Get auth token
+      const token = localStorage.getItem('authToken')
+      if (!token) {
+        throw new Error('Authentication required. Please log in.')
+      }
+
+      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+
+      // Step 1: Get patient information
+      const patientResponse = await fetch(`${baseUrl}/api/patients/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!patientResponse.ok) {
+        throw new Error(`Failed to fetch patient info: ${patientResponse.status}`)
+      }
+
+      const patientData: PatientResponse = await patientResponse.json()
+      
+      if (!patientData.success || !patientData.data?.patient?.id) {
+        throw new Error('Invalid patient data received')
+      }
+
+      setPatient(patientData.data.patient)
+      const patientId = patientData.data.patient.id
+
+      // Step 2: Fetch medical records
+      const recordsResponse = await fetch(
+        `${baseUrl}/api/patients/${patientId}/records`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!recordsResponse.ok) {
+        throw new Error(`Failed to fetch medical records: ${recordsResponse.status}`)
+      }
+
+      const recordsData: ApiResponse = await recordsResponse.json()
+
+      if (recordsData.success && recordsData.data.records) {
+        setRecords(recordsData.data.records)
+      } else {
+        throw new Error('Invalid response format')
+      }
+    } catch (err) {
+      console.error('Error fetching medical records:', err)
+      const message = err instanceof Error ? err.message : 'Failed to load medical records'
+      setError(message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Filter records by type
+  const medications = records.filter(r => r.recordType === 'medication')
+  const allergies = records.filter(r => r.recordType === 'allergy')
+  const labs = records.filter(r => r.recordType === 'lab')
+  const immunizations = records.filter(r => r.recordType === 'immunization')
+  const documents = records.filter(r => r.recordType === 'document')
+  const diagnoses = records.filter(r => r.recordType === 'diagnosis')
+  const procedures = records.filter(r => r.recordType === 'procedure')
+  const imaging = records.filter(r => r.recordType === 'imaging')
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
 
   return (
   <div className="space-y-6 px-2 sm:px-0">
-      <PatientCard />
+      <PatientCard patient={patient} loading={loading} />
 
+  {error && (
+        <div className="rounded-3xl border border-red-200 bg-red-50 p-4 text-center">
+          <p className="text-sm text-red-600">{error}</p>
+          <button 
+            onClick={fetchMedicalRecords}
+            className="mt-2 text-sm font-semibold text-[#2a6bb7] hover:underline"
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {loading && !error && (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#2a6bb7] border-r-transparent"></div>
+            <p className="mt-3 text-sm text-[#6f7d95]">Loading medical records...</p>
+          </div>
+        </div>
+      )}
+
+      {!loading && !error && (
   <div className="bg-white rounded-2xl border border-[#eef4ff] p-3 sm:p-4 shadow-sm">
   <nav className="flex overflow-x-auto gap-2 pb-3 no-scrollbar">
           {tabs.map((t) => (
@@ -94,106 +238,256 @@ const MedicalRecords: React.FC = () => {
 
   <div className="mt-4">
           {active === 'summary' && (
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-              <div className="md:col-span-2 bg-white">
-                <h3 className="text-base sm:text-lg font-semibold mb-2">Active Problems</h3>
-                <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
-                  {records.summary.activeProblems.map((p: string) => (
-                      <li key={p} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">{p}</li>
+            <section className="space-y-4">
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold mb-3">Diagnoses</h3>
+                {diagnoses.length > 0 ? (
+                  <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                    {diagnoses.map((record) => (
+                      <li key={record._id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="font-medium">{record.description}</div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              Dr. {record.doctorId.name} · {formatDate(record.date)}
+                            </div>
+                          </div>
+                          <Badge>{record.status}</Badge>
+                        </div>
+                      </li>
                     ))}
-                </ul>
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No diagnoses recorded</p>
+                )}
               </div>
 
-              <aside className="bg-white rounded-lg border border-[#eef4ff] p-3 sm:p-4">
-                <div className="text-xs sm:text-sm text-gray-500">Vitals</div>
-                <div className="mt-2 text-xs sm:text-sm text-[#17325a]"><strong>{data.summary.weightKg} kg</strong> · {data.summary.heightCm} cm</div>
-                <div className="mt-3 text-xs sm:text-sm text-gray-600">Blood type: <strong>{data.summary.bloodType}</strong></div>
-              </aside>
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold mb-3">Recent Procedures</h3>
+                {procedures.length > 0 ? (
+                  <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                    {procedures.map((record) => (
+                      <li key={record._id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">
+                        <div className="font-medium">{record.description}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          Dr. {record.doctorId.name} · {formatDate(record.date)}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No procedures recorded</p>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold mb-3">Imaging Studies</h3>
+                {imaging.length > 0 ? (
+                  <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                    {imaging.map((record) => (
+                      <li key={record._id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="font-medium">{record.description}</div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              Dr. {record.doctorId.name} · {formatDate(record.date)}
+                            </div>
+                            {record.files.length > 0 && (
+                              <a 
+                                href={record.files[0]} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-xs text-[#2a6bb7] hover:underline"
+                              >
+                                View Images
+                              </a>
+                            )}
+                          </div>
+                          <Badge>{record.status}</Badge>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500">No imaging studies recorded</p>
+                )}
+              </div>
             </section>
           )}
 
           {active === 'medications' && (
             <section>
               <h3 className="text-base sm:text-lg font-semibold mb-3">Current Medications</h3>
-              <ul className="space-y-2 sm:space-y-3">
-                {records.medications.map((m: Medication) => (
-                  <li key={m.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3 gap-1 sm:gap-0">
-                    <div>
-                      <div className="font-medium text-xs sm:text-sm">{m.name} <span className="text-xs text-gray-400">{m.dose}</span></div>
-                      <div className="text-xs text-gray-500">{m.frequency} · Prescribed: {m.prescriber}</div>
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-600">{m.status}</div>
-                  </li>
-                ))}
-              </ul>
+              {medications.length > 0 ? (
+                <ul className="space-y-2 sm:space-y-3">
+                  {medications.map((record) => (
+                    <li key={record._id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3 gap-1 sm:gap-0">
+                      <div className="flex-1">
+                        <div className="font-medium text-xs sm:text-sm">{record.description}</div>
+                        <div className="text-xs text-gray-500">
+                          Prescribed by: Dr. {record.doctorId.name} · {formatDate(record.date)}
+                        </div>
+                        {record.files.length > 0 && (
+                          <a 
+                            href={record.files[0]} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs text-[#2a6bb7] hover:underline"
+                          >
+                            View Prescription
+                          </a>
+                        )}
+                      </div>
+                      <Badge>{record.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">No medications recorded</p>
+              )}
             </section>
           )}
 
           {active === 'allergies' && (
             <section>
               <h3 className="text-base sm:text-lg font-semibold mb-3">Allergies</h3>
-              <ul className="space-y-2">
-                {records.allergies.map((a: Allergy) => (
-                  <li key={a.id} className="rounded-lg border border-[#fff1f1] bg-[#fffaf9] p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                    <div>
-                      <div className="font-medium text-xs sm:text-sm">{a.substance}</div>
-                      <div className="text-xs text-gray-600">Reaction: {a.reaction}</div>
-                    </div>
-                    <div className="text-xs sm:text-sm text-[#b02a37]">{a.severity}</div>
-                  </li>
-                ))}
-              </ul>
+              {allergies.length > 0 ? (
+                <ul className="space-y-2">
+                  {allergies.map((record) => (
+                    <li key={record._id} className="rounded-lg border border-[#fff1f1] bg-[#fffaf9] p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium text-xs sm:text-sm">{record.description}</div>
+                        <div className="text-xs text-gray-600">
+                          Recorded by: Dr. {record.doctorId.name} · {formatDate(record.date)}
+                        </div>
+                        {record.files.length > 0 && (
+                          <a 
+                            href={record.files[0]} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs text-[#2a6bb7] hover:underline"
+                          >
+                            View Details
+                          </a>
+                        )}
+                      </div>
+                      <Badge>{record.status}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">No allergies recorded</p>
+              )}
             </section>
           )}
 
           {active === 'labs' && (
             <section>
-              <h3 className="text-base sm:text-lg font-semibold mb-3">Recent Labs</h3>
-              <div className="space-y-2">
-                {records.labs.map((l: Lab) => (
-                  <div key={l.id} className="rounded-lg border border-[#eef4ff] p-2 sm:p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between">
-                    <div>
-                      <div className="font-medium text-xs sm:text-sm">{l.test}</div>
-                      <div className="text-xs text-gray-500">{l.date}</div>
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Lab Results</h3>
+              {labs.length > 0 ? (
+                <div className="space-y-2">
+                  {labs.map((record) => (
+                    <div key={record._id} className="rounded-lg border border-[#eef4ff] p-2 sm:p-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium text-xs sm:text-sm">{record.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Dr. {record.doctorId.name} · {formatDate(record.date)}
+                          </div>
+                          {record.files.length > 0 && (
+                            <a 
+                              href={record.files[0]} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#2a6bb7] hover:underline mt-1 inline-block"
+                            >
+                              View Lab Report
+                            </a>
+                          )}
+                        </div>
+                        <Badge>{record.status}</Badge>
+                      </div>
                     </div>
-                    <div className="text-xs sm:text-sm text-[#17325a]"><strong>{l.result}</strong> <div className="text-xs text-gray-400">{l.normalRange}</div></div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">No lab results available</p>
+              )}
             </section>
           )}
 
           {active === 'immunizations' && (
             <section>
               <h3 className="text-base sm:text-lg font-semibold mb-3">Immunizations</h3>
-              <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
-                {records.immunizations.map((i: Immunization) => (
-                  <li key={i.id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">{i.vaccine} · {i.date}</li>
-                ))}
-              </ul>
+              {immunizations.length > 0 ? (
+                <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                  {immunizations.map((record) => (
+                    <li key={record._id} className="rounded-md border border-[#eef4ff] p-2 sm:p-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="font-medium">{record.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Administered: {formatDate(record.date)} · Dr. {record.doctorId.name}
+                          </div>
+                          {record.files.length > 0 && (
+                            <a 
+                              href={record.files[0]} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#2a6bb7] hover:underline"
+                            >
+                              View Certificate
+                            </a>
+                          )}
+                        </div>
+                        <Badge>{record.status}</Badge>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">No immunizations recorded</p>
+              )}
             </section>
           )}
 
           {active === 'documents' && (
             <section>
-              <h3 className="text-base sm:text-lg font-semibold mb-3">Documents</h3>
-              <ul className="space-y-2">
-                {records.documents.map((d: Document) => (
-                  <li key={d.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3">
-                    <div>
-                      <div className="font-medium text-xs sm:text-sm">{d.title}</div>
-                      <div className="text-xs text-gray-500">{d.type} · {d.date}</div>
-                    </div>
-                    <div>
-                      <button className="text-xs sm:text-sm text-[#2a6bb7]">View</button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <h3 className="text-base sm:text-lg font-semibold mb-3">Medical Documents</h3>
+              {documents.length > 0 ? (
+                <ul className="space-y-2">
+                  {documents.map((record) => (
+                    <li key={record._id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between rounded-lg border border-[#eef4ff] p-2 sm:p-3 gap-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-xs sm:text-sm">{record.description}</div>
+                        <div className="text-xs text-gray-500">
+                          {record.recordType} · {formatDate(record.date)} · Dr. {record.doctorId.name}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Badge>{record.status}</Badge>
+                        {record.files.length > 0 && (
+                          <a 
+                            href={record.files[0]} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs sm:text-sm text-[#2a6bb7] hover:underline"
+                          >
+                            View
+                          </a>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-gray-500">No documents available</p>
+              )}
             </section>
           )}
         </div>
       </div>
+      )}
     </div>
   )
 }

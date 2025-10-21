@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { logout } from '../../../lib/utils/auth'
 
 type Props = {
   title?: string
@@ -10,6 +11,17 @@ const StaffNavbar: React.FC<Props> = ({ title = 'MediWay', subtitle = '' }) => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setOpen(false);
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/login');
+    }
+  };
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -52,7 +64,7 @@ const StaffNavbar: React.FC<Props> = ({ title = 'MediWay', subtitle = '' }) => {
                 <div className="flex flex-col gap-1">
                   <button onClick={() => { navigate('/staff/auth'); setOpen(false) }} className="text-left text-sm px-2 py-2 rounded hover:bg-[#f5f8ff]">Sign In</button>
                   <button onClick={() => { navigate('/staff/check-in'); setOpen(false) }} className="text-left text-sm px-2 py-2 rounded hover:bg-[#f5f8ff]">Check-In</button>
-                  <button onClick={() => { navigate('/login'); setOpen(false) }} className="text-left text-sm px-2 py-2 rounded text-[#c0392b] hover:bg-[#fff5f5]">Sign Out</button>
+                  <button onClick={handleLogout} className="text-left text-sm px-2 py-2 rounded text-[#c0392b] hover:bg-[#fff5f5]">Sign Out</button>
                 </div>
               </div>
             </div>
