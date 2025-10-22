@@ -1,16 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../ui/Button';
 import Input from '../../../Shared_Ui/Input';
 import StaffNavbar from './StaffNavbar';
+import { staffLogin } from '../../../lib/utils/staffApi';
 
 const StaffAuth: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [rememberDevice, setRememberDevice] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate successful login
-    navigate('/staff/check-in');
+    
+    // Validation
+    if (!email || !password) {
+      setError('Please enter both email/staff ID and password');
+      return;
+    }
+    
+    setError(null);
+    setLoading(true);
+
+    try {
+      const data = await staffLogin({ email, password });
+
+      // Store authentication data
+      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('user', JSON.stringify(data.data.user));
+      localStorage.setItem('staff', JSON.stringify(data.data.staff));
+      
+      // Store remember device preference
+      if (rememberDevice) {
+        localStorage.setItem('rememberDevice', 'true');
+      }
+
+      // Only redirect to staff portal if role is staff
+      if (data.data.user.role.toLowerCase() === 'staff') {
+        navigate('/staff/check-in');
+      } else {
+        throw new Error('Unauthorized: Staff credentials required');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Login failed. Please try again.';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,22 +73,44 @@ const StaffAuth: React.FC = () => {
               type="text"
               placeholder="Enter your email or staff ID"
               className="mb-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              name="email"
             />
             <Input
               label="Password"
               type="password"
               placeholder="Enter your password"
               className="mb-2"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              name="password"
             />
+            
+            {error && (
+              <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3">
+                {error}
+              </div>
+            )}
+            
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="form-checkbox rounded border-gray-300" />
+                <input 
+                  type="checkbox" 
+                  className="form-checkbox rounded border-gray-300"
+                  checked={rememberDevice}
+                  onChange={(e) => setRememberDevice(e.target.checked)}
+                />
                 Remember this device
               </label>
               <a href="#" className="text-[#2a6bb7] hover:underline">Forgot Password?</a>
             </div>
-            <Button type="submit" className="w-full mt-2 text-base font-semibold py-3 bg-[#2a6bb7] hover:bg-[#245ca0] active:bg-[#1f4f8a]">
-              Sign in to Staff Portal
+            <Button 
+              type="submit" 
+              className="w-full mt-2 text-base font-semibold py-3 bg-[#2a6bb7] hover:bg-[#245ca0] active:bg-[#1f4f8a]"
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in to Staff Portal'}
             </Button>
           </form>
           <div className="my-4 w-full flex items-center">

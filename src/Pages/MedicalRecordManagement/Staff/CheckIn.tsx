@@ -21,7 +21,12 @@ const CheckIn: React.FC = () => {
           >
             Scan Health Card
           </Button>
-          <button className="w-full max-w-xs mb-4 py-3 rounded-md border border-gray-300 bg-white text-gray-700 font-medium shadow-sm transition hover:bg-gray-100">Enter Patient ID Manually</button>
+          <button 
+            className="w-full max-w-xs mb-4 py-3 rounded-md border border-gray-300 bg-white text-gray-700 font-medium shadow-sm transition hover:bg-gray-100"
+            onClick={() => navigate('/staff/manual-checkin')}
+          >
+            Enter Appointment ID Manually
+          </button>
         </div>
       </main>
     </div>

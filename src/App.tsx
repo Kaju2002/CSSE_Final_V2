@@ -45,6 +45,7 @@ import ScanSuccess from "./Pages/MedicalRecordManagement/Staff/ScanSuccess";
 import PatientRecordsOverview from "./Pages/MedicalRecordManagement/Staff/PatientRecordsOverview";
 import MedicalHistory from "./Pages/MedicalRecordManagement/Staff/MedicalHistory";
 import CheckInConfirmation from "./Pages/MedicalRecordManagement/Staff/CheckInConfirmation";
+import ManualCheckIn from "./Pages/MedicalRecordManagement/Staff/ManualCheckIn";
 import KioskWelcome from "./Pages/Kiosk/KioskWelcome";
 import KioskCheckInSuccess from "./Pages/Kiosk/KioskCheckInSuccess";
 import KioskQRScan from "./Pages/Kiosk/KioskQRScan";
@@ -64,6 +65,7 @@ function App() {
           <Route path="/staff/auth" element={<StaffAuth />} />
           {/* Staff Check-In Route */}
           <Route path="/staff/check-in" element={<CheckIn />} />
+          <Route path="/staff/manual-checkin" element={<ManualCheckIn />} />
           <Route path="/staff/scan" element={<ScanHealthCard />} />
           <Route path="/staff/scan-success" element={<ScanSuccess />} />
           <Route
