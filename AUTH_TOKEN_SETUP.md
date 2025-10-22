@@ -266,3 +266,4 @@ const patientId = localStorage.getItem('yourUserIdKey') || '...fallback...';
 
 That's it! The appointment booking system will handle the rest automatically. 🎉
 
+

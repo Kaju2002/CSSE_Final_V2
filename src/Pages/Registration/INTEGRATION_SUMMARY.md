@@ -498,3 +498,4 @@ The registration module is now **fully integrated** with the Hospital Management
 **Last Updated**: October 2025  
 **Version**: 1.0.0
 
+

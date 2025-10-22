@@ -30,7 +30,8 @@ const LOAD_MORE_ROWS = 2
 const INITIAL_VISIBLE = CARDS_PER_ROW * INITIAL_ROWS
 const LOAD_MORE_INCREMENT = CARDS_PER_ROW * LOAD_MORE_ROWS
 
-const parseDistance = (distance: string | number) => {
+const parseDistance = (distance: string | number | undefined) => {
+  if (distance === undefined || distance === null) return Number.POSITIVE_INFINITY
   if (typeof distance === 'number') return distance
   const match = distance.match(/([\d.]+)/)
   return match ? Number.parseFloat(match[1]) : Number.POSITIVE_INFINITY
@@ -137,7 +138,9 @@ const MakeAppointment: React.FC = () => {
 
   const renderHospitalCard = (hospital: Hospital) => {
     const isSelected = bookingState.hospital?.id === hospital.id
-    const distanceText = typeof hospital.distance === 'number' 
+    const distanceText = hospital.distance === undefined || hospital.distance === null
+      ? 'Distance not available'
+      : typeof hospital.distance === 'number' 
       ? `${hospital.distance} miles away` 
       : hospital.distance
 

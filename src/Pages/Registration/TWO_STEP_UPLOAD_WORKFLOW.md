@@ -447,3 +447,4 @@ Then update `uploadDocument()` to call this single endpoint instead.
 **Last Updated:** October 2025  
 **Version:** 2.1.0
 
+

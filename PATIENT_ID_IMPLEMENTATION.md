@@ -334,3 +334,4 @@ console.log('Current booking state:', {
 
 The appointment booking system now uses authenticated, real-time patient data for all appointments! 🎉
 
+

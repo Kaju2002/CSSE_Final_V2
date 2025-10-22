@@ -4,7 +4,7 @@ export type Hospital = {
 	address: string
 	phone: string
 	image: string
-	distance: string | number
+	distance?: string | number
 	specialities: string[]
 	type: 'Government' | 'Private'
 }

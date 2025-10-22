@@ -346,3 +346,4 @@ CLOUDINARY_API_SECRET=your_api_secret
 **Last Updated:** October 2025  
 **Version:** 2.0.0
 
+

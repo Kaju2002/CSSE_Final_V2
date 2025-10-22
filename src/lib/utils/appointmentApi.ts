@@ -27,7 +27,7 @@ export type ApiHospital = {
   address: string;
   phone: string;
   type: 'Government' | 'Private';
-  distance: number;
+  distance?: number;
   image: string;
   specialities: string[];
   createdAt: string;
