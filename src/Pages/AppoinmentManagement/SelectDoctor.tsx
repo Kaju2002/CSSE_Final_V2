@@ -19,7 +19,7 @@ type Doctor = {
 	id: string
 	name: string
 	title: string
-	bio: string
+	bio?: string
 	avatarUrl?: string
 	rating: number
 	reviewCount: number
@@ -33,7 +33,7 @@ const convertApiDoctor = (apiDoctor: ApiDoctor): Doctor => ({
 	id: apiDoctor._id,
 	name: apiDoctor.name,
 	title: apiDoctor.specialization,
-	bio: apiDoctor.bio,
+	bio: apiDoctor.bio || 'No bio available',
 	avatarUrl: apiDoctor.profileImage,
 	rating: apiDoctor.rating,
 	reviewCount: apiDoctor.reviewCount,
@@ -336,7 +336,8 @@ const SelectDoctor: React.FC = () => {
 					{filteredDoctors.map((doctor) => {
 						const isActive = doctor.id === selectedDoctorId
 						const isBioExpanded = expandedBioDoctorId === doctor.id
-						const shouldClampBio = !isBioExpanded && doctor.bio.length > 200
+						const bioLength = doctor.bio?.length || 0
+						const shouldClampBio = !isBioExpanded && bioLength > 200
 						const availabilityBadge = getAvailabilityBadge(doctor)
 						const AvailabilityIcon = availabilityBadge.icon
 
@@ -399,7 +400,7 @@ const SelectDoctor: React.FC = () => {
 																		<div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#f5f8ff] via-[#f5f8ff]/80 to-transparent" />
 																	)}
 																</div>
-																{doctor.bio.length > 260 && (
+																{bioLength > 260 && (
 																	<button
 																		type="button"
 																		onClick={() => toggleBioExpansion(doctor.id)}

@@ -78,10 +78,10 @@ export type ApiDoctor = {
     name: string;
     address: string;
   };
-  profileImage: string;
+  profileImage?: string;
   rating: number;
   reviewCount: number;
-  bio: string;
+  bio?: string;
   availableSlots: any[];
   createdAt: string;
   updatedAt: string;
