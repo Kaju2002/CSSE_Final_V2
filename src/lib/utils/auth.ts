@@ -109,6 +109,8 @@ export const logout = async (): Promise<void> => {
   localStorage.removeItem('registration');
   localStorage.removeItem('registration_complete');
   localStorage.removeItem('token'); // Also remove 'token' key used by Login
+  // Clear any doctor-specific cached data
+  try { localStorage.removeItem('doctor'); } catch {}
 
   // Navigate to login page. Use window.location to ensure navigation even when helper
   // is used outside React Router contexts.

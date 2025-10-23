@@ -50,6 +50,32 @@ const Login: React.FC = () => {
   // Store in auth context
   login(data.data.user, data.data.token);
 
+  // If logged in as a doctor, fetch /api/doctors/me and persist doctor details
+  try {
+    const roleLower = (data.data.user.role || '').toLowerCase();
+    if (roleLower === 'doctor') {
+      const docRes = await fetch(`${API_BASE_URL}/api/doctors/me`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${data.data.token}`,
+        },
+      });
+
+      // Only parse JSON when the server responds with JSON
+      const ct = docRes.headers.get('content-type') || '';
+      if (docRes.ok && ct.includes('application/json')) {
+        const docJson = await docRes.json();
+        const doc = docJson.data?.doctor;
+        if (doc) {
+          try { localStorage.setItem('doctor', JSON.stringify(doc)); } catch (e) { /* ignore */ }
+        }
+      }
+    }
+  } catch (e) {
+    // Non-fatal: we still allow login to proceed even if /api/doctors/me fails
+    console.warn('Failed to fetch doctor details after login', e);
+  }
+
   // Redirect based on user role
   const role = (data.data.user.role || '').toLowerCase();
       

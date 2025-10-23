@@ -36,6 +36,12 @@ const doctorLinks = [
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   ) },
+  { label: 'Time Slots', to: '/doctor/slots', icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v4l3 2" />
+    </svg>
+  ) },
   { label: 'Settings', to: '/doctor/settings', icon: (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
       <circle cx="12" cy="12" r="3" />
@@ -83,7 +89,6 @@ const DoctorSidebar: React.FC = () => {
               <NavLink
                 key={item.label}
                 to={item.to}
-                end={item.end}
                 className={({ isActive }) => `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition ${
                   isActive ? 'bg-[#eef4ff] text-[#2a6bb7]' : 'hover:bg-[#f0f6ff] hover:text-[#2a6bb7]'
                 }`}

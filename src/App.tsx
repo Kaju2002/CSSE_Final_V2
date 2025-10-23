@@ -28,6 +28,7 @@ import DoctorPatients from "./Pages/Doctor/DoctorPatients";
 import DoctorLabResults from "./Pages/Doctor/DoctorLabResults";
 import DoctorMessages from "./Pages/Doctor/DoctorMessages";
 import DoctorSettings from "./Pages/Doctor/DoctorSettings";
+import DoctorTimeSlots from "./Pages/Doctor/DoctorTimeSlots";
 import HospitalStats from "./Pages/Admin/HospitalStats";
 import Reports from "./Pages/Admin/Reports";
 import PatientReports from "./Pages/Admin/PatientReports";
@@ -160,6 +161,7 @@ function App() {
           <Route path="/doctor/patients" element={<DoctorPatients />} />
           <Route path="/doctor/lab-results" element={<DoctorLabResults />} />
           <Route path="/doctor/messages" element={<DoctorMessages />} />
+          <Route path="/doctor/slots" element={<DoctorTimeSlots />} />
           <Route path="/doctor/settings" element={<DoctorSettings />} />
           {/* Admin routes */}
           <Route path="/admin/user-management" element={<UserManagement />} />

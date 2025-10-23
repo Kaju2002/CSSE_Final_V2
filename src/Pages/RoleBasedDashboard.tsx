@@ -15,7 +15,11 @@ const RoleBasedDashboard: React.FC = () => {
     let mounted = true;
     (async () => {
       try {
-        const res = await fetch('/api/appointments/pending-feedback');
+        const token = localStorage.getItem('token') || localStorage.getItem('authToken')
+        const headers: HeadersInit = { 'Content-Type': 'application/json' }
+        if (token) headers['Authorization'] = `Bearer ${token}`
+
+        const res = await fetch('/api/appointments/pending-feedback', { headers });
         if (!mounted || !res.ok) return;
         const list = await res.json();
         if (Array.isArray(list) && list.length > 0) {
