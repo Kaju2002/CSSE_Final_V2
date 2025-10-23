@@ -9,7 +9,7 @@ type Hospital = {
   address: string
   phone: string
   type: 'Government' | 'Private'
-  distance?: number
+  distance?: number | undefined
   image: string
   specialities: string[]
 }
@@ -43,7 +43,7 @@ const HospitalManagement: React.FC = () => {
         address: h.address,
         phone: h.phone,
         type: h.type,
-        distance: h.distance,
+  distance: h.distance ?? undefined,
         image: h.image,
         specialities: h.specialities,
       }))
@@ -60,7 +60,8 @@ const HospitalManagement: React.FC = () => {
   const filtered = useMemo(() => {
     const s = q.toLowerCase().trim()
     return hospitals.filter(item => {
-      if (typeFilter !== 'All' && item.type !== typeFilter) return false
+      // Compare types case-insensitively to tolerate API casing differences
+      if (typeFilter !== 'All' && (item.type || '').toLowerCase() !== typeFilter.toLowerCase()) return false
       if (!s) return true
       return (
         item.name.toLowerCase().includes(s) ||
@@ -307,7 +308,7 @@ const HospitalForm: React.FC<{ hospital?: Hospital; onSave: (h: Hospital) => voi
     if (!state.name.trim()) return alert('Please provide a hospital name')
     if (!state.address.trim()) return alert('Please provide an address')
     if (!state.phone.trim()) return alert('Please provide a phone number')
-    if (state.distance < 0) return alert('Distance must be a positive number')
+  if (state.distance !== undefined && state.distance < 0) return alert('Distance must be a positive number')
     
     // Parse specialities from comma-separated input
     const specialities = specialitiesInput

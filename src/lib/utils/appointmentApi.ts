@@ -1,5 +1,5 @@
 // API Base URL - Update this to match your backend URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://csse-api-final.onrender.com';
 
 // Helper function to get auth token
 const getAuthToken = (): string | null => {

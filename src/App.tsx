@@ -13,6 +13,7 @@ import AppointmentSuccess from "./Pages/AppoinmentManagement/AppointmentSuccess"
 import ViewAppointments from "./Pages/AppoinmentManagement/ViewAppointments";
 import MedicalRecords from "./Pages/AppoinmentManagement/MedicalRecords";
 import { AppointmentBookingProvider } from "./contexts/AppointmentBookingContext";
+import { AuthProvider, RequireAuth, useAuth } from "./contexts/AuthContext";
 import RoleBasedDashboard from "./Pages/RoleBasedDashboard";
 import FeedbackPage from "./Pages/AppoinmentManagement/FeedbackPage";
 import UserManagement from "./Pages/Admin/UserManagement";
@@ -59,8 +60,9 @@ import ProfilePage from "./Shared_Ui/ProfilePage";
 function App() {
   return (
     <div className="min-h-screen bg-[#f5f8fd]">
-      <AppointmentBookingProvider>
-        <Routes>
+      <AuthProvider>
+        <AppointmentBookingProvider>
+          <Routes>
           {/* Staff Authentication Route */}
           <Route path="/staff/auth" element={<StaffAuth />} />
           {/* Staff Check-In Route */}
@@ -107,7 +109,14 @@ function App() {
             element={<Step6RegistrationComplete />}
           />
           {/* Role-based dashboard route */}
-          <Route path="/dashboard" element={<RoleBasedDashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <RoleBasedDashboard />
+              </RequireAuth>
+            }
+          />
           {/* Doctor dashboard and features routes */}
           <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
@@ -128,7 +137,13 @@ function App() {
           <Route path="/admin/reports/patients" element={<PatientReports />} />
           <Route path="/admin/staff-scheduling" element={<StaffScheduling />} />
           <Route path="/admin/settings" element={<Settings />} />
-          <Route element={<Home />}>
+          <Route
+            element={
+              <RequireAuth>
+                <Home />
+              </RequireAuth>
+            }
+          >
             <Route index element={<Dashboard />} />
             <Route path="appointments">
               <Route index element={<ViewAppointments />} />
@@ -163,10 +178,28 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
           <Route path="/login" element={<Login />} />
+
+          {/* Default root: if authenticated go to role dashboard, else go to login */}
+          <Route
+            path="/"
+            element={<AuthRedirect />}
+          />
         </Routes>
       </AppointmentBookingProvider>
+      </AuthProvider>
     </div>
   );
 }
 
 export default App;
+
+function AuthRedirect() {
+  // simple inline component to decide root navigation
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { isAuthenticated } = useAuth();
+    return isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+  } catch {
+    return <Navigate to="/login" replace />;
+  }
+}

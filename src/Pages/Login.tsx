@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "../Shared_Ui/Input";
 import Button from "../ui/Button";
+import { useAuth } from "../contexts/AuthContext";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://csse-api-final.onrender.com";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,12 +47,11 @@ const Login: React.FC = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      // Store token and user data in localStorage
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("user", JSON.stringify(data.data.user));
+  // Store in auth context
+  login(data.data.user, data.data.token);
 
-      // Redirect based on user role
-      const role = data.data.user.role.toLowerCase();
+  // Redirect based on user role
+  const role = (data.data.user.role || '').toLowerCase();
       
       switch (role) {
         case "admin":
@@ -75,6 +76,29 @@ const Login: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // If already authenticated, redirect away from the login page
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const role = (user?.role || '').toLowerCase();
+    switch (role) {
+      case "admin":
+        navigate("/admin/hospital-stats");
+        break;
+      case "doctor":
+        navigate("/doctor/dashboard");
+        break;
+      case "patient":
+        navigate("/");
+        break;
+      case "staff":
+        navigate("/staff/check-in");
+        break;
+      default:
+        navigate("/");
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +142,15 @@ const Login: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Prevent rendering the login form while redirecting
+  if (isAuthenticated) {
+    return (
+      <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center px-6 py-6">
+        <div className="text-center">Redirecting...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-5rem)] items-center justify-center px-6 py-6">

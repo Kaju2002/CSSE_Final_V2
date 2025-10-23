@@ -2,18 +2,10 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminDashboard from './Admin/AdminDashboard';
 import Dashboard from './AppoinmentManagement/Dashboard';
-
-
-
-// TEMP: Simulate user role until real auth is implemented
-const getSimulatedUser = () => {
-  // Change this to 'admin', 'staff', or 'patient' to test different dashboards
-  return { role: 'admin' };
-};
+import { useAuth } from '../contexts/AuthContext';
 
 const RoleBasedDashboard: React.FC = () => {
-  // const { user } = useAuth(); // Replace with real auth context when available
-  const user = getSimulatedUser();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {

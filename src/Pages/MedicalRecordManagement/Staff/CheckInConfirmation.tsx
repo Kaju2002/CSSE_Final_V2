@@ -4,7 +4,7 @@ import Button from '../../../ui/Button';
 import StaffNavbar from './StaffNavbar';
 import { staffAuthenticatedFetch } from '../../../lib/utils/staffApi';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://csse-api-final.onrender.com";
 
 interface AppointmentData {
   _id: string;

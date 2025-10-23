@@ -89,7 +89,7 @@ export const logout = async (): Promise<void> => {
   // Call logout API if token exists
   if (token) {
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const API_BASE_URL = import.meta.env.VITE_API_URL || "https://csse-api-final.onrender.com";
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
         method: "POST",
         headers: {
@@ -109,6 +109,16 @@ export const logout = async (): Promise<void> => {
   localStorage.removeItem('registration');
   localStorage.removeItem('registration_complete');
   localStorage.removeItem('token'); // Also remove 'token' key used by Login
+
+  // Navigate to login page. Use window.location to ensure navigation even when helper
+  // is used outside React Router contexts.
+  try {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+  } catch (err) {
+    // ignore navigation errors
+  }
 };
 
 /**

@@ -3,7 +3,7 @@
  * Handles staff authentication and staff-specific operations
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://csse-api-final.onrender.com";
 
 /**
  * Get authentication headers for staff API requests
@@ -193,7 +193,7 @@ export async function checkInAppointment(appointmentId: string): Promise<{
     };
   };
 }> {
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "https://csse-api-final.onrender.com";
   
   const response = await staffAuthenticatedFetch(
     `${API_BASE_URL}/api/appointments/${appointmentId}/checkin`,
