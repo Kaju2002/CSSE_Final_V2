@@ -59,6 +59,16 @@ const StaffNavbar: React.FC<Props> = ({ title = 'MediWay', subtitle = '' }) => {
           <Link to="/staff/check-in" className="text-sm text-[#1b2b4b] hover:text-[#2a6bb7]">Check-In</Link>
           <Link to="/staff/patient-records" className="text-sm text-[#1b2b4b] hover:text-[#2a6bb7]">Patient Records</Link>
           <Link to="/staff/medical-history" className="text-sm text-[#1b2b4b] hover:text-[#2a6bb7]">Medical History</Link>
+          {/* Visible logout button for quick access on desktop */}
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="text-sm text-[#c0392b] hover:underline ml-2 px-2 py-1 rounded"
+              title="Sign out"
+            >
+              Logout
+            </button>
+          )}
         </nav>
 
         {/* Profile + dropdown */}

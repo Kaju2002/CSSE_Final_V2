@@ -43,6 +43,7 @@ import CheckIn from "./Pages/MedicalRecordManagement/Staff/CheckIn";
 import StaffAuth from "./Pages/MedicalRecordManagement/Staff/StaffAuth";
 import ScanHealthCard from "./Pages/MedicalRecordManagement/Staff/ScanHealthCard";
 import ScanSuccess from "./Pages/MedicalRecordManagement/Staff/ScanSuccess";
+import StaffProtectedRoute from "./Pages/MedicalRecordManagement/Staff/StaffProtectedRoute";
 import PatientRecordsOverview from "./Pages/MedicalRecordManagement/Staff/PatientRecordsOverview";
 import MedicalHistory from "./Pages/MedicalRecordManagement/Staff/MedicalHistory";
 import CheckInConfirmation from "./Pages/MedicalRecordManagement/Staff/CheckInConfirmation";
@@ -63,20 +64,56 @@ function App() {
       <AuthProvider>
         <AppointmentBookingProvider>
           <Routes>
-          {/* Staff Authentication Route */}
+          {/* Staff Authentication Route (public) */}
           <Route path="/staff/auth" element={<StaffAuth />} />
-          {/* Staff Check-In Route */}
-          <Route path="/staff/check-in" element={<CheckIn />} />
-          <Route path="/staff/manual-checkin" element={<ManualCheckIn />} />
-          <Route path="/staff/scan" element={<ScanHealthCard />} />
-          <Route path="/staff/scan-success" element={<ScanSuccess />} />
+          {/* Protected Staff Routes (require staff auth) */}
+          <Route
+            path="/staff/check-in"
+            element={
+              <StaffProtectedRoute>
+                <CheckIn />
+              </StaffProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/manual-checkin"
+            element={
+              <StaffProtectedRoute>
+                <ManualCheckIn />
+              </StaffProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/scan"
+            element={
+              <StaffProtectedRoute>
+                <ScanHealthCard />
+              </StaffProtectedRoute>
+            }
+          />
+          <Route
+            path="/staff/scan-success"
+            element={
+              <StaffProtectedRoute>
+                <ScanSuccess />
+              </StaffProtectedRoute>
+            }
+          />
           <Route
             path="/staff/patient-records"
-            element={<PatientRecordsOverview />}
+            element={
+              <StaffProtectedRoute>
+                <PatientRecordsOverview />
+              </StaffProtectedRoute>
+            }
           />
           <Route
             path="/staff/check-in-confirmation"
-            element={<CheckInConfirmation />}
+            element={
+              <StaffProtectedRoute>
+                <CheckInConfirmation />
+              </StaffProtectedRoute>
+            }
           />
           <Route path="/kiosk/welcome" element={<KioskWelcome />} />
           <Route path="/kiosk/success" element={<KioskCheckInSuccess />} />
