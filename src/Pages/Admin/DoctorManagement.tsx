@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import AdminLayout from './AdminLayout'
-import { fetchAllDoctors, createDoctor, updateDoctor, deleteDoctor } from '../../lib/utils/adminApi'
+import { fetchAllDoctors, createDoctor, updateDoctor, deleteDoctor, fetchAllUsers, fetchAllHospitals, fetchAllDepartments } from '../../lib/utils/adminApi'
 import type { ApiDoctor } from '../../lib/utils/adminApi'
 
 type Doctor = {
@@ -321,7 +321,7 @@ const DoctorForm: React.FC<{ doctor?: Doctor; onSave: (d: Doctor) => void; onCan
           name: '', 
           specialization: '', 
           departmentId: '',
-          hospitalId: '',
+          hospitalId:'',
           profileImage: 'https://cloudinary.com/doctor.jpg',
           email: '',
           phone: '',
@@ -330,6 +330,61 @@ const DoctorForm: React.FC<{ doctor?: Doctor; onSave: (d: Doctor) => void; onCan
           reviewCount: 0
         }
   )
+
+  // Dropdown data
+  const [users, setUsers] = useState<{_id: string; name: string; email: string}[]>([])
+  const [hospitals, setHospitals] = useState<{_id: string; name: string; specialities: string[]}[]>([])
+  const [departments, setDepartments] = useState<{_id: string; name: string}[]>([])
+  const [specializations, setSpecializations] = useState<string[]>([])
+  
+
+  useEffect(() => {
+    // load users and hospitals on mount
+    const load = async () => {
+      try {
+        const [usersRes, hospitalsRes] = await Promise.all([
+          fetchAllUsers({ limit: 200, role: 'doctor' }),
+          fetchAllHospitals({ limit: 200 })
+        ])
+
+        setUsers(usersRes.data.users.map(u => ({ _id: u._id, name: u.name, email: u.email })))
+
+        const hs = hospitalsRes.data.hospitals.map(h => ({ _id: h._id, name: h.name, specialities: h.specialities || [] }))
+        setHospitals(hs)
+
+        // derive unique specializations from hospital specialities
+        const specSet = new Set<string>()
+        hs.forEach(h => (h.specialities || []).forEach(s => s && specSet.add(s)))
+        setSpecializations(Array.from(specSet))
+
+        // if editing and hospitalId present, fetch departments for that hospital
+        if (doctor && doctor.hospitalId) {
+          const hid = typeof doctor.hospitalId === 'string' ? doctor.hospitalId : (doctor.hospitalId as any)._id
+          await loadDepartmentsForHospital(hid)
+        }
+      } catch (e) {
+        // ignore silently; user can still enter ids manually if needed
+        console.error('Failed to load dropdown data', e)
+      } finally {
+        // no loading state to update here
+      }
+    }
+
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const loadDepartmentsForHospital = async (hospitalId: string) => {
+    try {
+      const depsRes = await fetchAllDepartments({ hospitalId, limit: 200 })
+      setDepartments(depsRes.data.departments.map(d => ({ _id: d._id, name: d.name })))
+    } catch (e) {
+      console.error('Failed to load departments', e)
+      setDepartments([])
+    } finally {
+      // no loading state to update
+    }
+  }
 
   const handleSave = () => {
     if (!state.name.trim()) return alert('Please provide a name')
@@ -369,35 +424,64 @@ const DoctorForm: React.FC<{ doctor?: Doctor; onSave: (d: Doctor) => void; onCan
         disabled={saving}
       />
       {!isEditing && (
-        <input 
-          value={state.userId} 
-          onChange={e => setState({ ...state, userId: e.target.value })} 
-          placeholder="User ID (from users collection)" 
+        <div>
+          <label className="text-xs text-gray-600">Link to User</label>
+          <select
+            value={state.userId}
+            onChange={e => setState({ ...state, userId: e.target.value })}
+            className="w-full border px-3 py-2 rounded"
+            disabled={saving}
+          >
+            <option value="">Select user (optional)</option>
+            {users.map(u => (
+              <option key={u._id} value={u._id}>{u.name} — {u.email}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <div>
+        <label className="text-xs text-gray-600">Specialization</label>
+        <select
+          value={state.specialization}
+          onChange={e => setState({ ...state, specialization: e.target.value })}
           className="w-full border px-3 py-2 rounded"
           disabled={saving}
-        />
-      )}
-      <input 
-        value={state.specialization} 
-        onChange={e => setState({ ...state, specialization: e.target.value })} 
-        placeholder="Specialization (e.g., Cardiology)" 
-        className="w-full border px-3 py-2 rounded"
-        disabled={saving}
-      />
-      <input 
-        value={state.departmentId} 
-        onChange={e => setState({ ...state, departmentId: e.target.value })} 
-        placeholder="Department ID (e.g., 65f1a2b3...)" 
-        className="w-full border px-3 py-2 rounded"
-        disabled={saving}
-      />
-      <input 
-        value={state.hospitalId} 
-        onChange={e => setState({ ...state, hospitalId: e.target.value })} 
-        placeholder="Hospital ID (e.g., 65f1a2b3...)" 
-        className="w-full border px-3 py-2 rounded"
-        disabled={saving}
-      />
+        >
+          <option value="">Select specialization</option>
+          {specializations.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </div>
+
+      <div>
+        <label className="text-xs text-gray-600">Hospital</label>
+        <select
+          value={state.hospitalId}
+          onChange={async (e) => {
+            const val = e.target.value
+            setState({ ...state, hospitalId: val, departmentId: '' })
+            if (val) await loadDepartmentsForHospital(val)
+          }}
+          className="w-full border px-3 py-2 rounded"
+          disabled={saving}
+        >
+          <option value="">Select hospital</option>
+          {hospitals.map(h => <option key={h._id} value={h._id}>{h.name}</option>)}
+        </select>
+      </div>
+
+      <div>
+        <label className="text-xs text-gray-600">Department</label>
+        <select
+          value={state.departmentId}
+          onChange={e => setState({ ...state, departmentId: e.target.value })}
+          className="w-full border px-3 py-2 rounded"
+          disabled={saving}
+        >
+          <option value="">Select department</option>
+          {departments.map(d => <option key={d._id} value={d._id}>{d.name}</option>)}
+        </select>
+      </div>
       <input 
         value={state.profileImage} 
         onChange={e => setState({ ...state, profileImage: e.target.value })} 

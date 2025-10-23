@@ -960,7 +960,7 @@ export async function createUser(data: {
   role: 'patient' | 'doctor' | 'staff' | 'admin';
   isActive?: boolean;
 }): Promise<ApiResponse<{ user: ApiUser }>> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/users`, {
+  const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
     method: 'POST',
     headers: getAuthHeaders(),
     body: JSON.stringify(data),
