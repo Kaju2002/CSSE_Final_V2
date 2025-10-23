@@ -93,6 +93,7 @@ const AppointmentSuccess: React.FC = () => {
 
     const payload = {
       reference: appointmentReference,
+      appointmentId: appointmentReference,
       hospitalId: hospital?.id ?? null,
       hospitalName: hospital?.name ?? null,
       hospitalAddress: hospital?.address ?? null,

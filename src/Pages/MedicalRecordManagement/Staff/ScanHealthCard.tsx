@@ -3,6 +3,7 @@ import Button from '../../../ui/Button';
 import { useNavigate } from 'react-router-dom';
 import QrReader from "react-qr-scanner";
 import StaffNavbar from './StaffNavbar';
+import staffApi from '../../../lib/utils/staffApi';
 
 const ScanHealthCard: React.FC = () => {
   const [cameraEnabled, setCameraEnabled] = useState(false);
@@ -29,19 +30,33 @@ const ScanHealthCard: React.FC = () => {
                 <div className="w-full max-w-xs aspect-video bg-black rounded-lg overflow-hidden border-4 border-[#2a6bb7] shadow-lg">
                   <QrReader
                     constraints={{ facingMode: 'environment' }}
-                    onResult={(result) => {
+                    onResult={async (result: any) => {
                       if (result) {
-                        // Simulate patient info lookup from scan result
-                        navigate('/staff/scan-success', {
-                          state: {
-                            patient: {
-                              name: 'Sarah Johnson',
-                              dob: 'March 15, 1985',
-                              id: result.getText() || 'MW-2024-001234',
-                            },
-                          },
-                        });
                         setCameraEnabled(false);
+                        const text = (result as any).getText ? (result as any).getText() : String(result?.text || result);
+
+                        // Try to parse JSON QR payload
+                        let parsed: any = null;
+                        try {
+                          parsed = JSON.parse(text);
+                        } catch (e) {
+                          // not JSON, treat as raw id
+                        }
+
+                        const appointmentId = parsed?.appointmentId ?? parsed?.reference ?? text;
+
+                        try {
+                          // Call the staff API to check-in the appointment
+                          const res = await staffApi.checkInAppointment(appointmentId);
+                          navigate('/staff/scan-success', {
+                            state: { result: res },
+                          });
+                        } catch (err: any) {
+                          // Navigate to failure screen with error message
+                          navigate('/staff/scan-failure', {
+                            state: { error: err?.message ?? String(err), scannedValue: text },
+                          });
+                        }
                       }
                     }}
                   />
