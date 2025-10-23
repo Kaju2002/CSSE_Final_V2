@@ -1,30 +1,47 @@
 import React from 'react'
 import { describe, test, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import Dashboard from '../Dashboard'
 
 // Basic render test
 describe('Dashboard', () => {
   test('renders welcome message', () => {
-    render(<Dashboard />)
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    )
     expect(screen.getByText(/Welcome, Chamodi Dilki!/)).toBeInTheDocument()
   })
 
   test('renders all action cards', () => {
-    render(<Dashboard />)
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Make New Appointment')).toBeInTheDocument()
     expect(screen.getByText('My Appointments')).toBeInTheDocument()
     expect(screen.getByText('Medical Records')).toBeInTheDocument()
   })
 
   test('renders all action card buttons', () => {
-    render(<Dashboard />)
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Schedule Now')).toBeInTheDocument()
     expect(screen.getAllByText('View Details').length).toBe(2)
   })
 
   test('renders recent activity section', () => {
-    render(<Dashboard />)
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    )
     expect(screen.getByText('Recent Activity')).toBeInTheDocument()
     expect(
       screen.getByText('Appointment with Dr. Emily White on Oct 26, 2024 at 10:00 AM.')
