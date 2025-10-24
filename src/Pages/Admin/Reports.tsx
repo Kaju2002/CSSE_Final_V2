@@ -4,6 +4,32 @@ import { useNavigate } from 'react-router-dom'
 import { fetchReportsOverview, exportReportsCSV, fetchAllHospitals, fetchAllDepartments, createStaffSchedule } from '../../lib/utils/adminApi'
 import type { ApiHospital, ApiDepartment } from '../../lib/utils/adminApi'
 
+// Local types for report data structures used by this component
+type VisitPoint = { bucketStart: string; visits: number }
+type VisitsOverTimeDept = { points?: VisitPoint[] }
+type TopDepartment = { departmentName: string; visits: number }
+type TableRow = { date: string; department: string; visits: number; avgWaitSeconds?: number; peakHour?: string }
+type ReportSummary = { totalVisits?: number; avgWaitSeconds?: number; peakHour?: string }
+
+type ReportData = {
+  visitsOverTime?: VisitsOverTimeDept[]
+  topDepartments?: TopDepartment[]
+  table?: { rows?: TableRow[]; pagination?: { total?: number } }
+  summary?: ReportSummary
+}
+
+type SchedulingSuggestion = {
+  departmentId?: string
+  departmentName?: string
+  date: string
+  hour: string
+  expectedVisits?: number
+  rationale?: string
+  recommendedStaffCount: number
+}
+
+type SchedulingSuggestions = { suggestions: SchedulingSuggestion[] }
+
 const Reports: React.FC = () => {
   const navigate = useNavigate()
   const [fromDate, setFromDate] = useState('2025-07-01')
@@ -18,11 +44,11 @@ const Reports: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [exporting, setExporting] = useState(false)
   const [showScheduleModal, setShowScheduleModal] = useState(false)
-  const [schedulingSuggestions, setSchedulingSuggestions] = useState<any>(null)
+  const [schedulingSuggestions, setSchedulingSuggestions] = useState<SchedulingSuggestions | null>(null)
   const [loadingSuggestions, setLoadingSuggestions] = useState(false)
   const [creatingSchedule, setCreatingSchedule] = useState(false)
   
-  const [reportData, setReportData] = useState<any>(null)
+  const [reportData, setReportData] = useState<ReportData | null>(null)
 
   // Load hospitals and departments on mount
   useEffect(() => {
@@ -182,8 +208,8 @@ const Reports: React.FC = () => {
       setCreatingSchedule(true)
 
       // Convert suggestions to allocations format
-      const allocations = schedulingSuggestions.suggestions.map((suggestion: any) => ({
-        departmentId: suggestion.departmentId,
+      const allocations = schedulingSuggestions.suggestions.map((suggestion: SchedulingSuggestion) => ({
+        departmentId: suggestion.departmentId ?? '',
         date: suggestion.date,
         hour: suggestion.hour,
         requiredCount: suggestion.recommendedStaffCount,
@@ -227,11 +253,11 @@ const Reports: React.FC = () => {
       return { linePoints: '', areaPath: '', points: [], maxVisits: 0, minVisits: 0 }
     }
     
-    // Flatten the nested structure - aggregate all departments' visits by date
-    const dateMap = new Map<string, number>()
-    
-    reportData.visitsOverTime.forEach((dept: any) => {
-      dept.points?.forEach((point: any) => {
+  // Flatten the nested structure - aggregate all departments' visits by date
+  const dateMap = new Map<string, number>();
+
+  (reportData.visitsOverTime || []).forEach((dept: VisitsOverTimeDept) => {
+      dept.points?.forEach((point: VisitPoint) => {
         const date = point.bucketStart
         const currentVisits = dateMap.get(date) || 0
         dateMap.set(date, currentVisits + point.visits)
@@ -239,7 +265,7 @@ const Reports: React.FC = () => {
     })
     
     // Convert to array and sort by date
-    const data = Array.from(dateMap.entries())
+    const data: { date: string; visits: number }[] = Array.from(dateMap.entries() as Iterable<[string, number]>)
       .map(([date, visits]) => ({ date, visits }))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     
@@ -270,12 +296,12 @@ const Reports: React.FC = () => {
   const getBarChartData = () => {
     if (!reportData?.topDepartments) return { bars: [] }
     
-    const data = reportData.topDepartments
-    const maxCount = Math.max(...data.map((d: any) => d.visits), 1)
+    const data: TopDepartment[] = reportData.topDepartments || []
+    const maxCount = Math.max(...data.map((d: TopDepartment) => d.visits), 1)
   const barWidth = 80
   const barSpacing = 120
 
-    const bars = data.map((d: any, i: number) => {
+    const bars = data.map((d: TopDepartment, i: number) => {
       const x = padding.left + i * barSpacing + 10
       const barHeight = (d.visits / maxCount) * innerHeight
       const y = padding.top + innerHeight - barHeight
@@ -419,7 +445,7 @@ const Reports: React.FC = () => {
                   </span>
             </div>
             
-                {points.length > 0 ? (
+        {points.length > 0 ? (
             <svg width={chartWidth} height={chartHeight} className="w-full">
               {/* Area fill */}
               <path d={areaPath} fill="#7fc3ff" opacity="0.5" />
@@ -433,7 +459,7 @@ const Reports: React.FC = () => {
               />
               
               {/* Points */}
-                    {points.map((p: any, i: number) => (
+                    {points.map((p: { x: number; y: number; date: string }, i: number) => (
                       <circle key={i} cx={p.x} cy={p.y} r="3" fill="#3b82f6" />
                     ))}
 
@@ -458,7 +484,7 @@ const Reports: React.FC = () => {
                     <line x1={padding.left} y1={padding.top} x2={padding.left} y2={padding.top + innerHeight} stroke="#e5e7eb" strokeWidth="1" />
                     <line x1={padding.left} y1={padding.top + innerHeight} x2={chartWidth - padding.right} y2={padding.top + innerHeight} stroke="#e5e7eb" strokeWidth="1" />
 
-                    {bars.map((bar: any, i: number) => (
+                    {bars.map((bar: { x: number; y: number; width: number; height: number; name: string; count: number }, i: number) => (
                   <g key={i}>
                         <rect x={bar.x} y={bar.y} width={bar.width} height={bar.height} fill="#7fc3ff" rx="4" />
                         <text x={bar.x + bar.width / 2} y={padding.top + innerHeight + 15} textAnchor="middle" fontSize="11" fill="#374151">
@@ -486,7 +512,7 @@ const Reports: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-                  {reportData.table?.rows?.map((row: any, i: number) => (
+                  {reportData.table?.rows?.map((row: TableRow, i: number) => (
                 <tr key={i} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {new Date(row.date).toLocaleDateString()}
@@ -499,7 +525,7 @@ const Reports: React.FC = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{row.peakHour || '—'}</td>
                 </tr>
               ))}
-                  {reportData.table?.rows?.length > 0 && (
+                  {(reportData.table?.rows && reportData.table.rows.length > 0) && (
               <tr className="bg-gray-50 font-semibold">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Total</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"></td>
@@ -565,7 +591,7 @@ const Reports: React.FC = () => {
                   <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                   <p className="mt-4 text-gray-600">Generating staffing suggestions...</p>
                 </div>
-              ) : schedulingSuggestions?.suggestions?.length > 0 ? (
+              ) : (schedulingSuggestions && schedulingSuggestions.suggestions.length > 0) ? (
                 <>
                   <p className="text-sm text-gray-600 mb-4">
                     Based on the report data, here are the recommended staff allocations for peak hours:
@@ -583,7 +609,7 @@ const Reports: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {schedulingSuggestions.suggestions.map((suggestion: any, idx: number) => (
+                        {schedulingSuggestions.suggestions.map((suggestion: SchedulingSuggestion, idx: number) => (
                           <tr key={idx} className="hover:bg-gray-50">
                             <td className="px-4 py-3 text-sm text-gray-900">
                               {new Date(suggestion.date).toLocaleDateString()}
