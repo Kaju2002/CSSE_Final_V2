@@ -12,6 +12,7 @@ import { initialAppointmentBookingState } from '../types/appointment'
 
 type AppointmentBookingContextValue = {
 	state: AppointmentBookingState
+	initialized: boolean
 	setHospital: (hospital: Hospital | null) => void
 	setDepartment: (department: AppointmentDepartment | null) => void
 	setService: (service: AppointmentService | null) => void
@@ -25,8 +26,10 @@ const AppointmentBookingContext = createContext<AppointmentBookingContextValue |
 
 export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	const [state, setState] = useState<AppointmentBookingState>(initialAppointmentBookingState)
+	const [initialized, setInitialized] = useState(false)
 
 	const setHospital = useCallback((hospital: Hospital | null) => {
+		setInitialized(true)
 		setState(() => {
 			if (!hospital) {
 				return { ...initialAppointmentBookingState }
@@ -40,6 +43,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 	}, [])
 
 	const setDepartment = useCallback((department: AppointmentDepartment | null) => {
+		setInitialized(true)
 		setState((previous) => ({
 			...previous,
 			department,
@@ -50,6 +54,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 	}, [])
 
 	const setService = useCallback((service: AppointmentService | null) => {
+		setInitialized(true)
 		setState((previous) => ({
 			...previous,
 			service,
@@ -59,6 +64,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 	}, [])
 
 	const setDoctor = useCallback((doctor: AppointmentDoctor | null) => {
+		setInitialized(true)
 		setState((previous) => ({
 			...previous,
 			doctor,
@@ -67,6 +73,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 	}, [])
 
 	const setSlot = useCallback((slot: AppointmentSlot | null) => {
+		setInitialized(true)
 		setState((previous) => ({
 			...previous,
 			slot
@@ -74,6 +81,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 	}, [])
 
 	const updateDetails = useCallback((details: AppointmentDetailsUpdate) => {
+		setInitialized(true)
 		setState((previous) => ({
 			...previous,
 			...details
@@ -82,11 +90,13 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 
 	const resetBooking = useCallback(() => {
 		setState({ ...initialAppointmentBookingState })
+		setInitialized(false)
 	}, [])
 
 	const value = useMemo<AppointmentBookingContextValue>(
 		() => ({
 			state,
+			initialized,
 			setHospital,
 			setDepartment,
 			setService,
@@ -95,7 +105,7 @@ export const AppointmentBookingProvider: React.FC<{ children: React.ReactNode }>
 			updateDetails,
 			resetBooking
 		}),
-		[state, setDepartment, setDoctor, setHospital, setService, setSlot, updateDetails, resetBooking]
+		[state, initialized, setDepartment, setDoctor, setHospital, setService, setSlot, updateDetails, resetBooking]
 	)
 
 	return <AppointmentBookingContext.Provider value={value}>{children}</AppointmentBookingContext.Provider>

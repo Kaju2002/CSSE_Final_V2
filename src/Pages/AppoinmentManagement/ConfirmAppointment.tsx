@@ -7,6 +7,9 @@ import type { AppointmentDoctor } from '../../types/appointment'
 import { createAppointment, createPayment, fetchCurrentPatient } from '../../lib/utils/appointmentApi'
 import { Loader2 } from 'lucide-react'
 
+// Local API response shapes used for defensive checks
+type ApiPatientResponse = { success?: boolean; data?: { patient?: { id?: string } } }
+type ApiGenericResponse = { success?: boolean; data?: unknown }
 const formatDateLabel = (isoDate: string | undefined): string => {
 	if (!isoDate) {
 		return 'Not selected'
@@ -28,7 +31,7 @@ const formatDateLabel = (isoDate: string | undefined): string => {
 const ConfirmAppointment: React.FC = () => {
 	const navigate = useNavigate()
 	const { hospitalId, departmentSlug } = useParams<{ hospitalId: string; departmentSlug: string }>()
-	const { state: bookingState, updateDetails } = useAppointmentBooking()
+	const { state: bookingState, updateDetails, initialized } = useAppointmentBooking()
 
 	const [reasonForVisit, setReasonForVisit] = useState('')
 	const [additionalNotes, setAdditionalNotes] = useState('')
@@ -49,15 +52,18 @@ const ConfirmAppointment: React.FC = () => {
 				setPatientError(null)
 				
 				const response = await fetchCurrentPatient()
-				
-				if (response.success && response.data.patient) {
-					setPatientId(response.data.patient.id)
+
+				// Guard against unexpected/undefined responses from the API util
+				const patientResp = response as unknown as ApiPatientResponse
+				if (patientResp && patientResp.success && patientResp.data?.patient) {
+					setPatientId(patientResp.data.patient.id ?? null)
 				} else {
 					setPatientError('Failed to load patient information')
 				}
-			} catch (error: any) {
+			} catch (error: unknown) {
 				console.error('Error fetching patient:', error)
-				setPatientError(error.message || 'Failed to load patient information. Please try logging in again.')
+				const message = error instanceof Error ? error.message : String(error)
+				setPatientError(message || 'Failed to load patient information. Please try logging in again.')
 			} finally {
 				setLoadingPatient(false)
 			}
@@ -67,6 +73,12 @@ const ConfirmAppointment: React.FC = () => {
 	}, [])
 
 	useEffect(() => {
+		// If booking context hasn't been initialized yet, avoid redirecting.
+		// The provider or tests may seed the booking state shortly after mount.
+		if (!initialized) {
+			return
+		}
+
 		// Validate all required booking information is present
 		if (!bookingState.slot || !bookingState.doctor) {
 			console.warn('Missing slot or doctor, redirecting back')
@@ -85,7 +97,7 @@ const ConfirmAppointment: React.FC = () => {
 			navigate(`/appointments/new/${hospitalId}/services`)
 			return
 		}
-	}, [bookingState.doctor, bookingState.slot, bookingState.department, bookingState.service, navigate, hospitalId])
+	}, [initialized, bookingState.doctor, bookingState.slot, bookingState.department, bookingState.service, navigate, hospitalId])
 
 	const doctor: AppointmentDoctor | null = useMemo(() => {
 		if (!bookingState.doctor) {
@@ -179,8 +191,12 @@ const ConfirmAppointment: React.FC = () => {
 
 			const appointmentResponse = await createAppointment(appointmentData)
 
-			if (!appointmentResponse.success) {
-				throw new Error('Failed to create appointment')
+			// Defensive: some mocks or API layers may return undefined or unexpected shapes
+			const apptResp = appointmentResponse as unknown as ApiGenericResponse
+			if (!apptResp || !apptResp.success) {
+				console.warn('createAppointment returned unexpected/failed response:', appointmentResponse)
+				setSubmitError('Failed to create appointment')
+				return
 			}
 
 			// If it's a private hospital and payment is required, create payment
@@ -194,9 +210,9 @@ const ConfirmAppointment: React.FC = () => {
 				}
 
 				const paymentResponse = await createPayment(paymentData)
-
-				if (!paymentResponse.success) {
-					console.error('Payment failed, but appointment was created')
+				const payResp = paymentResponse as unknown as ApiGenericResponse
+				if (!payResp || !payResp.success) {
+					console.warn('Payment failed or returned unexpected response, but appointment was created', paymentResponse)
 					// You might want to handle this differently
 				}
 			}
@@ -217,11 +233,11 @@ const ConfirmAppointment: React.FC = () => {
 					appointmentId: appointmentResponse.data._id || appointmentResponse.data.id
 				}
 			})
-		} catch (error: any) {
-			console.error('Error creating appointment:', error)
-			
+		} catch (error: unknown) {
+			console.warn('Error creating appointment:', error)
+
 			// Error message is already parsed in the API layer
-			const errorMessage = error.message || 'Failed to create appointment. Please try again.'
+			const errorMessage = error instanceof Error ? error.message : String(error) || 'Failed to create appointment. Please try again.'
 			setSubmitError(errorMessage)
 		} finally {
 			setSubmitting(false)

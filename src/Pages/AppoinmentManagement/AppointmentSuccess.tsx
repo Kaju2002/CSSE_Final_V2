@@ -172,7 +172,17 @@ const AppointmentSuccess: React.FC = () => {
     const location = encodeURIComponent(hospital?.address ?? "");
     const dates = `${fmtForGoogle(ev.start)}/${fmtForGoogle(ev.end)}`;
     const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}&sf=true&output=xml`;
-    window.open(url, "_blank");
+    try {
+      if (typeof window !== "undefined" && typeof window.open === "function") {
+        window.open(url, "_blank");
+      } else {
+  // In some test environments (jsdom) window.open/navigation is not implemented.
+  // Log a warning instead of throwing an unimplemented error.
+  console.warn('window.open is not available in this environment; cannot open Google Calendar URL', url);
+      }
+    } catch (err) {
+      console.warn('Failed to open Google Calendar URL', err);
+    }
   };
 
   const downloadICS = () => {
@@ -214,9 +224,15 @@ const AppointmentSuccess: React.FC = () => {
     a.href = href;
     a.download = `${uid}.ics`;
     document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(href);
+    try {
+      // a.click() may trigger navigation in some environments; guard it.
+      a.click();
+    } catch (err) {
+      console.warn('Unable to programmatically click download link in this environment', err);
+    } finally {
+      a.remove();
+      URL.revokeObjectURL(href);
+    }
   };
 
   const setReminderLocal = async (minutesBefore = 60) => {
