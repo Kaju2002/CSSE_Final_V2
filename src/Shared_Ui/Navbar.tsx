@@ -97,7 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({ role = 'patient' }) => {
                   </>
                 ) : (
                   <>
-                    <p className="font-semibold">Chamodi Dilki</p>
+                    <p className="font-semibold">Kajanthan U</p>
                     <p className="text-xs text-[#6f7d95]">Patient ID 10234</p>
                   </>
                 )}

@@ -33,7 +33,8 @@ const LOAD_MORE_INCREMENT = CARDS_PER_ROW * LOAD_MORE_ROWS
 const parseDistance = (distance: string | number | undefined) => {
   if (distance === undefined || distance === null) return Number.POSITIVE_INFINITY
   if (typeof distance === 'number') return distance
-  const match = distance.match(/([\d.]+)/)
+  const str = String(distance)
+  const match = str.match(/([\d.]+)/)
   return match ? Number.parseFloat(match[1]) : Number.POSITIVE_INFINITY
 }
 
@@ -69,14 +70,14 @@ const MakeAppointment: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        const params: any = {
+        const params: Record<string, unknown> = {
           limit: 100 // Fetch more initially
         };
         
-        // Apply filters if not 'all' or 'any'
-        if (hospitalType !== 'all') {
-          params.type = hospitalType === 'government' ? 'Government' : 'Private';
-        }
+        // NOTE: avoid sending a server-side 'type' param because different
+        // backends use different casing/values ('Government' vs 'government').
+        // Instead fetch a broad result set and apply a normalized client-side
+        // filter below to ensure All/Government/Private works reliably.
         
         if (speciality !== 'any') {
           params.speciality = speciality;
@@ -99,12 +100,12 @@ const MakeAppointment: React.FC = () => {
     };
 
     loadHospitals();
-  }, [hospitalType, speciality]);
+  }, [speciality]);
 
   const specialityOptions = useMemo(() => {
     const unique = new Set<string>()
     hospitals.forEach((hospital) => {
-      hospital.specialities.forEach((item) => unique.add(item))
+      ;(hospital.specialities ?? []).forEach((item) => unique.add(item))
     })
     return ['any', ...Array.from(unique).sort()]
   }, [hospitals])
@@ -118,14 +119,16 @@ const MakeAppointment: React.FC = () => {
         distance === 'any' ? true : Number.parseFloat(distance) >= numericDistance
 
       const matchesSpeciality =
-        speciality === 'any' ? true : hospital.specialities.includes(speciality)
+        speciality === 'any' ? true : (hospital.specialities ?? []).includes(speciality)
 
       const matchesType =
-        hospitalType === 'all' ? true : hospital.type.toLowerCase() === hospitalType
+        hospitalType === 'all'
+          ? true
+          : (hospital.type ?? '').toString().toLowerCase() === hospitalType.toString().toLowerCase()
 
       return matchesSearch && withinDistance && matchesSpeciality && matchesType
     })
-  }, [searchTerm, distance, speciality, hospitalType])
+  }, [hospitals, searchTerm, distance, speciality, hospitalType])
 
   useEffect(() => {
     setVisibleCount(INITIAL_VISIBLE)

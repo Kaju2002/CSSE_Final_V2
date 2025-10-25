@@ -1,5 +1,5 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useMemo } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { BellRing, Calendar, CalendarCheck2, ClipboardList, FileText, FlaskConical, Pill } from 'lucide-react'
 
 const actionCards = [
@@ -26,7 +26,8 @@ const actionCards = [
   }
 ]
 
-const recentActivity = [
+// Fallback dummy activity when no appointment data is provided via router state
+const fallbackRecentActivity = [
   {
     label: 'Appointment with Dr. Emily White on Oct 26, 2024 at 10:00 AM.',
     icon: Calendar
@@ -47,10 +48,56 @@ const recentActivity = [
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Map appointments passed via router state into the recent activity shape
+  const recentActivity = useMemo(() => {
+    type IncomingAppointment = {
+      date?: string
+      time?: string
+      timeLabel?: string
+      doctorId?: { name?: string }
+      doctorName?: string
+    }
+
+    let incoming = (location.state as { recentActivityAppointments?: unknown })?.recentActivityAppointments
+
+    // If there's no router state, try sessionStorage as a fallback so the
+    // Dashboard can show appointments even after a refresh or direct visit.
+    if (!incoming) {
+      try {
+        const raw = sessionStorage.getItem('recentActivityAppointments')
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          if (Array.isArray(parsed) && parsed.length > 0) incoming = parsed
+        }
+      } catch {
+        // ignore parse/storage errors and fall back to dummy data below
+      }
+    }
+
+    if (!incoming || !Array.isArray(incoming) || incoming.length === 0) {
+      return fallbackRecentActivity
+    }
+
+    const arr = incoming as IncomingAppointment[]
+    // Map each appointment into a label + icon used by the recent activity list
+    return arr.map((a) => {
+      const date = a.date ? new Date(a.date) : null
+      const dateLabel = date
+        ? date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+        : a.date || ''
+      const time = a.time ?? a.timeLabel ?? ''
+      const doctor = a.doctorId?.name ?? a.doctorName ?? 'Doctor'
+      const label = `Appointment with ${doctor} on ${dateLabel}${time ? ' at ' + time : ''}.`
+      return { label, icon: Calendar }
+    })
+  }, [location.state])
+
   return (
     <div className="space-y-8">
       <header className="space-y-1">
-        <h2 className="text-3xl font-semibold text-[#1b2b4b]">Welcome, Chamodi Dilki!</h2>
+        <h2 className="text-3xl font-semibold text-[#1b2b4b]">Welcome, Kajanthan U!</h2>
         <p className="text-sm text-[#6f7d95]">
           Your health journey starts here. Quickly access your medical information and manage your appointments.
         </p>
