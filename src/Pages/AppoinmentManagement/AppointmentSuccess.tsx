@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 import { CalendarClock, MapPin, Stethoscope, UserRound } from "lucide-react";
@@ -85,10 +85,77 @@ const AppointmentSuccess: React.FC = () => {
   const slotTime = selectedSlot?.timeLabel ?? "--";
   const hospitalLabel = hospital?.name ?? "Hospital not provided";
   const departmentLabel = department?.name ?? "General Consultation";
+  const buildStartEndISO = useCallback(() => {
+    const isoDate = bookingState.slot?.date;
+    const timeLabel = bookingState.slot?.timeLabel;
+    if (!isoDate || !timeLabel) return null;
+
+    const date = new Date(isoDate);
+    const m = timeLabel.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!m) return null;
+    let hours = Number(m[1]);
+    const minutes = Number(m[2]);
+    const ampm = m[3].toUpperCase();
+    if (ampm === "PM" && hours !== 12) hours += 12;
+    if (ampm === "AM" && hours === 12) hours = 0;
+
+    const start = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hours,
+      minutes,
+      0
+    );
+    const end = new Date(start.getTime() + 30 * 60 * 1000);
+    return { start, end };
+  }, [bookingState.slot?.date, bookingState.slot?.timeLabel]);
 
   const qrValue = useMemo(() => {
+    // Prefer iCalendar VEVENT text when we have a valid date/time so phone
+    // scanners can detect an event and offer to add it to the calendar.
+    // Otherwise fallback to a JSON payload that the reception system can parse.
     if (!appointmentReference) {
       return "{}";
+    }
+
+    const ev = buildStartEndISO();
+    if (ev) {
+      const uid = appointmentReference || `appt-${Date.now()}`;
+      const dtstamp = new Date()
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .split(".")[0] + "Z";
+      const dtstart = ev.start
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .split(".")[0] + "Z";
+      const dtend = ev.end
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .split(".")[0] + "Z";
+      const title = `Appointment with ${doctor?.name ?? "Doctor"}`;
+      const description = `Reference: ${appointmentReference}\n${department?.name ?? departmentLabel}\nReason: ${reasonForVisit ?? ""}`;
+      const location = hospital?.address ?? hospital?.name ?? "";
+
+      const icsLines = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//CSSE_Hospital_V2//EN",
+        "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT",
+        `UID:${uid}`,
+        `DTSTAMP:${dtstamp}`,
+        `DTSTART:${dtstart}`,
+        `DTEND:${dtend}`,
+        `SUMMARY:${title}`,
+        `DESCRIPTION:${description}`,
+        `LOCATION:${location}`,
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ];
+
+      return icsLines.join("\r\n");
     }
 
     const payload = {
@@ -125,34 +192,11 @@ const AppointmentSuccess: React.FC = () => {
     reasonForVisit,
     selectedSlot?.date,
     selectedSlot?.timeLabel,
+    buildStartEndISO,
+    departmentLabel,
   ]);
 
   // ----------------- Calendar & Reminder helpers (UI-only) -----------------
-  const buildStartEndISO = () => {
-    const isoDate = bookingState.slot?.date;
-    const timeLabel = bookingState.slot?.timeLabel;
-    if (!isoDate || !timeLabel) return null;
-
-    const date = new Date(isoDate);
-    const m = timeLabel.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    if (!m) return null;
-    let hours = Number(m[1]);
-    const minutes = Number(m[2]);
-    const ampm = m[3].toUpperCase();
-    if (ampm === "PM" && hours !== 12) hours += 12;
-    if (ampm === "AM" && hours === 12) hours = 0;
-
-    const start = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      hours,
-      minutes,
-      0
-    );
-    const end = new Date(start.getTime() + 30 * 60 * 1000);
-    return { start, end };
-  };
 
   const fmtForGoogle = (d: Date) =>
     d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
