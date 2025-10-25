@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for CSSE_Final_V2/src/main.tsx</title>
+    <title>Code coverage report for CSSE_Final_V2/.storybook/preview.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">CSSE_Final_V2/src</a> main.tsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">CSSE_Final_V2/.storybook</a> preview.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
@@ -76,11 +76,7 @@
 <a name='L11'></a><a href='#L11'>11</a>
 <a name='L12'></a><a href='#L12'>12</a>
 <a name='L13'></a><a href='#L13'>13</a>
-<a name='L14'></a><a href='#L14'>14</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L14'></a><a href='#L14'>14</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -89,27 +85,31 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { StrictMode } from 'react'</span></span></span>
-<span class="cstat-no" title="statement not covered" >import { createRoot } from 'react-dom/client'</span>
-<span class="cstat-no" title="statement not covered" >import { BrowserRouter } from 'react-router-dom'</span>
-<span class="cstat-no" title="statement not covered" >import './index.css'</span>
-<span class="cstat-no" title="statement not covered" >import App from './App.tsx'</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Preview } from '@storybook/react-vite'
 &nbsp;
-<span class="cstat-no" title="statement not covered" >createRoot(document.getElementById('root')!).render(</span>
-<span class="cstat-no" title="statement not covered" >  &lt;StrictMode&gt;</span>
-<span class="cstat-no" title="statement not covered" >    &lt;BrowserRouter&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;App /&gt;</span>
-<span class="cstat-no" title="statement not covered" >    &lt;/BrowserRouter&gt;</span>
-<span class="cstat-no" title="statement not covered" >  &lt;/StrictMode&gt;,</span>
-<span class="cstat-no" title="statement not covered" >)</span>
-&nbsp;</pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >const preview: Preview = {</span>
+<span class="cstat-no" title="statement not covered" >  parameters: {</span>
+<span class="cstat-no" title="statement not covered" >    controls: {</span>
+<span class="cstat-no" title="statement not covered" >      matchers: {</span>
+<span class="cstat-no" title="statement not covered" >       color: /(background|color)$/i,</span>
+<span class="cstat-no" title="statement not covered" >       date: /Date$/i,</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >    },</span>
+<span class="cstat-no" title="statement not covered" >  },</span>
+<span class="cstat-no" title="statement not covered" >};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >export default preview;</span></pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-23T17:13:51.533Z
+                at 2025-10-25T03:42:42.447Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

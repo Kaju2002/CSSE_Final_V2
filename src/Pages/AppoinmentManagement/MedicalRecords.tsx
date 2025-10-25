@@ -132,13 +132,21 @@ const MedicalRecords: React.FC = () => {
       })
 
       if (!patientResponse.ok) {
-        throw new Error(`Failed to fetch patient info: ${patientResponse.status}`)
+        const msg = `Failed to fetch patient info: ${patientResponse.status}`
+        console.warn(msg)
+        setError(msg)
+        setLoading(false)
+        return
       }
 
       const patientData: PatientResponse = await patientResponse.json()
       
       if (!patientData.success || !patientData.data?.patient?.id) {
-        throw new Error('Invalid patient data received')
+        const msg = 'Invalid patient data received'
+        console.warn(msg, patientData)
+        setError(msg)
+        setLoading(false)
+        return
       }
 
       setPatient(patientData.data.patient)
@@ -156,21 +164,30 @@ const MedicalRecords: React.FC = () => {
       )
 
       if (!recordsResponse.ok) {
-        throw new Error(`Failed to fetch medical records: ${recordsResponse.status}`)
+        const msg = `Failed to fetch medical records: ${recordsResponse.status}`
+        console.warn(msg)
+        setError(msg)
+        setLoading(false)
+        return
       }
 
       const recordsData: ApiResponse = await recordsResponse.json()
 
       if (recordsData.success && recordsData.data.records) {
         setRecords(recordsData.data.records)
+        // Successfully loaded records; clear loading
+        setLoading(false)
       } else {
-        throw new Error('Invalid response format')
+        const msg = 'Invalid response format for medical records'
+        console.warn(msg, recordsData)
+        setError(msg)
+        setLoading(false)
+        return
       }
     } catch (err) {
-      console.error('Error fetching medical records:', err)
+      console.warn('Error fetching medical records:', err)
       const message = err instanceof Error ? err.message : 'Failed to load medical records'
       setError(message)
-    } finally {
       setLoading(false)
     }
   }

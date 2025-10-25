@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -110,8 +110,8 @@
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
-<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -131,7 +131,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -143,22 +143,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" >import React from 'react'<span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" ></span></span></span>
-<span class="cstat-no" title="statement not covered" >import { Outlet } from 'react-router-dom'</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react'
+import { Outlet } from 'react-router-dom'
 &nbsp;
 // const formatSlotSummary = (state: AppointmentBookingState): string =&gt; {
 // 	if (!state.slot) {
@@ -178,7 +178,7 @@
 &nbsp;
 // Header and step computation moved to `AppointmentWizardHeader.tsx`.
 &nbsp;
-<span class="cstat-no" title="statement not covered" >const AppointmentWizard: React.FC = () =&gt; {</span>
+const AppointmentWizard: React.FC = () =&gt; {
 	// Steps are computed in the page-level AppointmentWizardHeader component.
 &nbsp;
 	// const activeStep = useMemo(() =&gt; steps.find((step) =&gt; step.status === 'current') ?? steps[0], [steps])
@@ -190,20 +190,20 @@
 &nbsp;
 	// const ActiveIcon = activeStep.icon
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	return (</span>
-<span class="cstat-no" title="statement not covered" >		&lt;div className="min-h-[100svh] bg-[#f6f8ff]"&gt;</span>
-<span class="cstat-no" title="statement not covered" >			&lt;div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10 lg:px-0"&gt;</span>
+	return (
+		&lt;div className="min-h-[100svh] bg-[#f6f8ff]"&gt;
+			&lt;div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-10 lg:px-0"&gt;
 				{/* Header moved into page-level MakeAppointment to avoid duplication */}
 &nbsp;
-<span class="cstat-no" title="statement not covered" >				&lt;div className="rounded-[24px] border border-[#e1e6f5] bg-white p-6 shadow-sm"&gt;</span>
-<span class="cstat-no" title="statement not covered" >					&lt;Outlet /&gt;</span>
+				&lt;div className="rounded-[24px] border border-[#e1e6f5] bg-white p-6 shadow-sm"&gt;
+					&lt;Outlet /&gt;
 				&lt;/div&gt;
 			&lt;/div&gt;
-<span class="cstat-no" title="statement not covered" >		&lt;/div&gt;</span>
+		&lt;/div&gt;
 	)
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default AppointmentWizard</span>
+export default AppointmentWizard
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -211,7 +211,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-23T17:13:51.533Z
+                at 2025-10-25T03:42:42.447Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>
