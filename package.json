@@ -15,13 +15,9 @@
     "test:coverage": "vitest run --coverage",
     "test:open": "vitest --browser.headless=false",
     "test:admin": "vitest run src/Pages/Admin/_test_",
-    "test:admin:cov": "vitest run src/Pages/Admin/_test_ --coverage",
     "test:appointment": "vitest run src/Pages/AppoinmentManagement/_test_",
-    "test:appointment:cov": "vitest run src/Pages/AppoinmentManagement/_test_ --coverage",
     "test:mr-staff": "vitest run src/Pages/MedicalRecordManagement/Staff/_test_",
-    "test:mr-staff:cov": "vitest run src/Pages/MedicalRecordManagement/Staff/_test_ --coverage",
     "test:registration": "vitest run src/Pages/Registration/_test_",
-    "test:registration:cov": "vitest run src/Pages/Registration/_test_ --coverage",
     "test:four": "vitest run src/Pages/Admin/_test_ src/Pages/AppoinmentManagement/_test_ src/Pages/MedicalRecordManagement/Staff/_test_ src/Pages/Registration/_test_",
     "test:four:cov": "vitest run src/Pages/Admin/_test_ src/Pages/AppoinmentManagement/_test_ src/Pages/MedicalRecordManagement/Staff/_test_ src/Pages/Registration/_test_ --coverage"
   },

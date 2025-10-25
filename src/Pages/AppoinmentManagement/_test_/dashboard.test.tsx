@@ -12,7 +12,7 @@ describe('Dashboard', () => {
         <Dashboard />
       </MemoryRouter>
     )
-    expect(screen.getByText(/Welcome, Chamodi Dilki!/)).toBeInTheDocument()
+    expect(screen.getByText(/Welcome, Kajanthan U!/)).toBeInTheDocument()
   })
 
   test('renders all action cards', () => {
